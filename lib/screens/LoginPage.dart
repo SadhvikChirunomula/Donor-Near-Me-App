@@ -1,5 +1,6 @@
 import 'dart:convert';
 
+import 'package:dnmui/screens/DonorRequestPage.dart';
 import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
 
@@ -47,6 +48,7 @@ class _LoginPageState extends State<LoginPage> {
         minWidth: MediaQuery.of(context).size.width,
         padding: EdgeInsets.fromLTRB(20.0, 15.0, 20.0, 15.0),
         onPressed: () async {
+          print('Hello World');
           http.Response response = await http.post(
               'http://35.238.212.200:8080/authenticate',
               headers: <String, String>{
@@ -56,17 +58,27 @@ class _LoginPageState extends State<LoginPage> {
                 'mailid': emailFieldController.text,
                 'password': passwordFieldController.text
               }));
+          print(response.body);
           Map<String, dynamic> data = json.decode(response.body);
-//          print(data);
+          print(data);
           if (data['error'] == null) {
             print(data['status']);
+            print('Hello World');
+//            Navigator.push(
+//                context,
+//                MaterialPageRoute(builder: (context) {
+//                  return DonorRequestPage();
+//                })
+//            );
+//            Navigator.push(
+//              context,
+//              MaterialPageRoute(builder: (context) => DonorRequestPage()),
+//            );
+
           } else {
+            print("Error Ocuured" );
             print(data['error']);
           }
-//          print(data['']);
-//          print(data['']);
-//          print(data['']);
-//          print("Login Succesfull "+emailFieldController.text+" "+passwordFieldController.text);
         },
         child: Text("Login",
             textAlign: TextAlign.center,
