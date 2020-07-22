@@ -5,6 +5,7 @@ import 'package:http/http.dart' as http;
 
 class RegisterPage extends StatefulWidget {
   RegisterPage({Key key, this.title}) : super(key: key);
+
   final String title;
 
   @override
@@ -350,41 +351,44 @@ class _RegisterPageState extends State<RegisterPage> {
           brightness: Brightness.dark,
           centerTitle: true,
         ),
-        body: Center(
-          child: Container(
-            color: Colors.white,
-            child: Padding(
-              padding: const EdgeInsets.all(36.0),
-              child: ListView(
-                shrinkWrap: true,
-                children: <Widget>[
-                  fullNameField,
-                  SizedBox(height: 10.0),
-                  emailField,
-                  SizedBox(height: 10.0),
-                  passwordField,
-                  SizedBox(height: 10.0),
-                  mobileNumberField,
-                  SizedBox(height: 10.0),
-                  countryField,
-                  SizedBox(height: 10.0),
-                  stateField,
-                  SizedBox(height: 10.0),
-                  districtField,
-                  SizedBox(height: 10.0),
-                  cityField,
-                  SizedBox(height: 10.0),
-                  townField,
-                  SizedBox(height: 10.0),
-                  bloodGroupField,
-                  SizedBox(height: 10.0),
-                  pincodeField,
-                  SizedBox(height: 10.0),
-                  registerButon,
-                ],
-              ),
+        body: Container(
+          height: double.infinity,
+          width: double.infinity,
+          decoration: BoxDecoration(
+              gradient: LinearGradient(
+                  colors: [Colors.red[100],  Colors.red[200]])),
+          child: Center(
+              child: Padding(
+            padding: const EdgeInsets.all(36.0),
+            child: ListView(
+              shrinkWrap: true,
+              children: <Widget>[
+                fullNameField,
+                SizedBox(height: 10.0),
+                emailField,
+                SizedBox(height: 10.0),
+                passwordField,
+                SizedBox(height: 10.0),
+                mobileNumberField,
+                SizedBox(height: 10.0),
+                countryField,
+                SizedBox(height: 10.0),
+                stateField,
+                SizedBox(height: 10.0),
+                districtField,
+                SizedBox(height: 10.0),
+                cityField,
+                SizedBox(height: 10.0),
+                townField,
+                SizedBox(height: 10.0),
+                bloodGroupField,
+                SizedBox(height: 10.0),
+                pincodeField,
+                SizedBox(height: 10.0),
+                registerButon,
+              ],
             ),
-          ),
+          )),
         ),
         floatingActionButton: Container(
             height: 100.0,

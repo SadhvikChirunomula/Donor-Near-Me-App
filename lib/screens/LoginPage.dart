@@ -25,10 +25,10 @@ class _LoginPageState extends State<LoginPage> {
       controller: emailFieldController,
       style: style,
       decoration: InputDecoration(
-          contentPadding: EdgeInsets.fromLTRB(20.0, 15.0, 20.0, 15.0),
-          hintText: "Email",
-          border:
-              OutlineInputBorder(borderRadius: BorderRadius.circular(32.0))),
+        contentPadding: EdgeInsets.fromLTRB(20.0, 15.0, 20.0, 15.0),
+        hintText: "Email",
+        border: OutlineInputBorder(borderRadius: BorderRadius.circular(32.0)),
+      ),
     );
     final passwordField = TextField(
       obscureText: true,
@@ -60,23 +60,13 @@ class _LoginPageState extends State<LoginPage> {
               }));
           print(response.body);
           Map<String, dynamic> data = json.decode(response.body);
-          print(data);
           if (data['error'] == null) {
             print(data['status']);
-            print('Hello World');
-//            Navigator.push(
-//                context,
-//                MaterialPageRoute(builder: (context) {
-//                  return DonorRequestPage();
-//                })
-//            );
-//            Navigator.push(
-//              context,
-//              MaterialPageRoute(builder: (context) => DonorRequestPage()),
-//            );
-
+            Navigator.push(
+              context,
+              MaterialPageRoute(builder: (context) => DonorRequestPage()),
+            );
           } else {
-            print("Error Ocuured" );
             print(data['error']);
           }
         },
@@ -94,40 +84,44 @@ class _LoginPageState extends State<LoginPage> {
         brightness: Brightness.dark,
         centerTitle: true,
       ),
-      body: Center(
-        child: Container(
-          color: Colors.white,
-          child: Padding(
-            padding: const EdgeInsets.all(36.0),
-            child: ListView(
-              shrinkWrap: true,
-//              crossAxisAlignment: CrossAxisAlignment.center,
-//              mainAxisAlignment: MainAxisAlignment.center,
-              children: <Widget>[
-                SizedBox(
-                  child: Image.asset(
-                    "assets/logo.png",
-                    fit: BoxFit.contain,
-                  ),
+      body: Container(
+        height: double.infinity,
+        width: double.infinity,
+        decoration: BoxDecoration(
+            gradient: LinearGradient(colors: [
+          Colors.red[100],
+          Colors.white,
+          Colors.red[50],
+        ])),
+        child: Center(
+            child: Padding(
+          padding: const EdgeInsets.all(36.0),
+          child: ListView(
+            shrinkWrap: true,
+            children: <Widget>[
+              SizedBox(
+                child: Image.asset(
+                  "assets/logo.png",
+                  fit: BoxFit.contain,
                 ),
-                SizedBox(
-                  height: 20.0,
-                ),
-                SizedBox(height: 10.0),
-                emailField,
-                SizedBox(height: 25.0),
-                passwordField,
-                SizedBox(
-                  height: 35.0,
-                ),
-                loginButon,
-                SizedBox(
-                  height: 15.0,
-                ),
-              ],
-            ),
+              ),
+              SizedBox(
+                height: 20.0,
+              ),
+              SizedBox(height: 10.0),
+              emailField,
+              SizedBox(height: 25.0),
+              passwordField,
+              SizedBox(
+                height: 35.0,
+              ),
+              loginButon,
+              SizedBox(
+                height: 15.0,
+              ),
+            ],
           ),
-        ),
+        )),
       ),
     );
   }

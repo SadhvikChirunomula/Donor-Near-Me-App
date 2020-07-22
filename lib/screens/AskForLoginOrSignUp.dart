@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 
+import 'ContactUsPage.dart';
 import 'file:///F:/dnmuiapp/dnmui/lib/screens/LoginPage.dart';
 import 'file:///F:/dnmuiapp/dnmui/lib/screens/RegisterPage.dart';
 
@@ -64,58 +65,66 @@ class AskForLoginOrSignUp extends StatelessWidget {
     );
 
     return Scaffold(
-        appBar: AppBar(
-          title: Text('Welcome To Donor Near Me'),
-          backgroundColor: Colors.redAccent,
-          brightness: Brightness.dark,
-          centerTitle: true,
-        ),
-        body: Center(
-          child: Container(
-            color: Colors.white,
-            child: Padding(
-              padding: const EdgeInsets.all(30.0),
-              child: ListView(
-                shrinkWrap: true,
-//              crossAxisAlignment: CrossAxisAlignment.center,
-//              mainAxisAlignment: MainAxisAlignment.end,
-                children: <Widget>[
-                  new Text(
-                    'Welcome To Donor Near Me',
-                    textAlign: TextAlign.center,
-                    style: new TextStyle(
+//        appBar: AppBar(
+//          title: Text('Welcome To Donor Near Me'),
+//          backgroundColor: Colors.redAccent,
+//          brightness: Brightness.dark,
+//          centerTitle: true,
+//        ),
+        body: Container(
+          height: double.infinity,
+          width: double.infinity,
+          decoration: BoxDecoration(
+              gradient: LinearGradient(colors: [
+            Colors.red[400],
+//            Colors.white,
+            Colors.red[600],
+            Colors.red[400],
+//                Colors.black,
+          ])),
+          child: Center(
+              child: Padding(
+            padding: new EdgeInsets.only(left: 30, right: 30),
+            child: ListView(
+              shrinkWrap: true,
+              children: <Widget>[
+                new Text(
+                  'Welcome To Donor Near Me',
+                  textAlign: TextAlign.center,
+                  style: new TextStyle(
+//                      backgroundColor: Colors. ,
                       color: Colors.black,
-                      fontSize: 25.0,
-                    ),
+                      fontWeight: FontWeight.bold,
+                      fontSize: 30.0,
+                      fontFamily: 'Open Sans'),
+                ),
+                SizedBox(
+                  height: 15.0,
+                ),
+                SizedBox(
+                  child: Image.asset(
+                    "assets/logo.png",
+                    fit: BoxFit.contain,
                   ),
-                  SizedBox(
-                    height: 15.0,
-                  ),
-                  SizedBox(
-                    child: Image.asset(
-                      "assets/logo.png",
-                      fit: BoxFit.contain,
-                    ),
-                  ),
-                  SizedBox(
-                    height: 20.0,
-                  ),
-                  loginButon,
-                  SizedBox(
-                    height: 20.0,
-                  ),
-                  registerButon,
-                  SizedBox(
-                    height: 20.0,
-                  ),
-                  factsButton,
-                  SizedBox(
-                    height: 20.0,
-                  ),
-                ],
-              ),
+                ),
+                SizedBox(
+                  height: 20.0,
+                ),
+                loginButon,
+                SizedBox(
+                  height: 20.0,
+                ),
+                registerButon,
+                SizedBox(
+                  height: 20.0,
+                ),
+                factsButton,
+                SizedBox(
+                  height: 20.0,
+                ),
+              ],
             ),
-          ),
+          )),
         ),
         floatingActionButton: Container(
             height: 75.0,
@@ -124,6 +133,10 @@ class AskForLoginOrSignUp extends StatelessWidget {
               child: Text("Contact Us"),
               onPressed: () {
                 print("Thankyou for the comment!!");
+                Navigator.push(
+                  context,
+                  MaterialPageRoute(builder: (context) => ContactUsPage()),
+                );
               },
             )));
   }
