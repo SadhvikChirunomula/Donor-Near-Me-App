@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
 
+import 'AskForLoginOrSignUp.dart';
+
 class PostContactUsPage extends StatefulWidget {
   PostContactUsPage({Key key, this.title}) : super(key: key);
 
@@ -18,6 +20,18 @@ class _PostContactUsPageState extends State<PostContactUsPage> {
         backgroundColor: Colors.redAccent,
         brightness: Brightness.dark,
         centerTitle: true,
+          actions: [
+            IconButton(
+              icon: Icon(Icons.home),
+              onPressed: () {
+                Navigator.push(
+                  context,
+                  MaterialPageRoute(
+                      builder: (context) => AskForLoginOrSignUp()),
+                );
+              },
+            )
+          ]
       ),
       body: Container(
         height: double.infinity,

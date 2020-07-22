@@ -1,7 +1,10 @@
 import 'dart:convert';
 
+import 'package:dnmui/screens/OtpVerifyPage.dart';
 import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
+
+import 'AskForLoginOrSignUp.dart';
 
 class RegisterPage extends StatefulWidget {
   RegisterPage({Key key, this.title}) : super(key: key);
@@ -117,7 +120,7 @@ class _RegisterPageState extends State<RegisterPage> {
         value: country,
         dropdownColor: Colors.red[100],
         icon: Icon(Icons.keyboard_arrow_down),
-        style: TextStyle(color: Colors.black ,fontWeight: FontWeight.normal),
+        style: TextStyle(color: Colors.black, fontWeight: FontWeight.normal),
         underline: SizedBox(),
         onChanged: (String newValue) async {
           var response = await http.get(
@@ -157,7 +160,7 @@ class _RegisterPageState extends State<RegisterPage> {
         icon: Icon(Icons.keyboard_arrow_down),
         iconSize: 24,
         elevation: 16,
-        style: TextStyle(color: Colors.deepPurple),
+        style: TextStyle(color: Colors.black),
         onChanged: (String newValue) async {
           var response = await http.get(
               'http://35.238.212.200:8080/getlist/districts?state=' + newValue);
@@ -194,7 +197,7 @@ class _RegisterPageState extends State<RegisterPage> {
         icon: Icon(Icons.keyboard_arrow_down),
         iconSize: 24,
         elevation: 16,
-        style: TextStyle(color: Colors.deepPurple),
+        style: TextStyle(color: Colors.black),
         onChanged: (String newValue) async {
           var response = await http.get(
               'http://35.238.212.200:8080/getlist/cities?district=' + newValue);
@@ -231,7 +234,7 @@ class _RegisterPageState extends State<RegisterPage> {
         icon: Icon(Icons.keyboard_arrow_down),
         iconSize: 24,
         elevation: 16,
-        style: TextStyle(color: Colors.deepPurple),
+        style: TextStyle(color: Colors.black),
         onChanged: (String newValue) async {
           var response = await http
               .get('http://35.238.212.200:8080/getlist/towns?city=' + newValue);
@@ -268,11 +271,12 @@ class _RegisterPageState extends State<RegisterPage> {
         icon: Icon(Icons.keyboard_arrow_down),
         iconSize: 24,
         elevation: 16,
-        style: TextStyle(color: Colors.deepPurple),
+        style: TextStyle(color: Colors.black),
         onChanged: (String newValue) async {
           var response =
               await http.get('http://35.238.212.200:8080/getlist/bloodgroups');
           Map<String, dynamic> data = json.decode(response.body);
+          bloodGroupsList = [];
           setState(() {
             town = newValue;
             var jsonList = data['bloodGroupsList']['blood_group'];
@@ -304,7 +308,7 @@ class _RegisterPageState extends State<RegisterPage> {
         icon: Icon(Icons.keyboard_arrow_down),
         iconSize: 24,
         elevation: 16,
-        style: TextStyle(color: Colors.deepPurple),
+        style: TextStyle(color: Colors.black),
         onChanged: (String newValue) {
           setState(() {
             bloodGroup = newValue;
@@ -339,7 +343,42 @@ class _RegisterPageState extends State<RegisterPage> {
         minWidth: MediaQuery.of(context).size.width,
         padding: EdgeInsets.fromLTRB(20.0, 15.0, 20.0, 15.0),
         onPressed: () async {
-
+          String userDetailsJson = jsonEncode(<String, String>{
+            'bloodgroup': bloodGroup,
+            'city': city,
+            'country': country,
+            'district': district,
+            'mail_notification': 'true',
+            'mailid': emailFieldController.text,
+            'password': passwordFieldController.text,
+            'phonenumber': mobileNumberFieldController.text,
+            'pincode': pincodeFieldController.text,
+            'sms_notification': 'true',
+            'state': state,
+            'town': town,
+            'username': fullNameFieldController.text,
+          });
+          print(userDetailsJson);
+          http.Response response =
+              await http.post('http://35.238.212.200:8080/sendotp',
+                  headers: <String, String>{
+                    'Content-Type': 'application/json; charset=UTF-8',
+                  },
+                  body: jsonEncode(<String, String>{
+                    'mailid': emailFieldController.text,
+                  }));
+          print(response.statusCode);
+          if (response.statusCode == 200) {
+            print("Taking you to OTP Page");
+            Navigator.push(
+              context,
+              MaterialPageRoute(
+                  builder: (context) =>
+                      OtpVerifyPage(userDetails: userDetailsJson)),
+            );
+          } else {
+            print("Please try again Later");
+          }
         },
         child: Text("Register",
             textAlign: TextAlign.center,
@@ -349,51 +388,62 @@ class _RegisterPageState extends State<RegisterPage> {
     );
 
     return Scaffold(
-        appBar: AppBar(
+      appBar: AppBar(
           title: Text('Register'),
           backgroundColor: Colors.redAccent,
           brightness: Brightness.dark,
           centerTitle: true,
-        ),
-        body: Container(
-          height: double.infinity,
-          width: double.infinity,
-          decoration: BoxDecoration(
-              gradient: LinearGradient(
-                  colors: [Colors.red[100],  Colors.red[200]])),
-          child: Center(
-              child: Padding(
-            padding: const EdgeInsets.all(36.0),
-            child: ListView(
-              shrinkWrap: true,
-              children: <Widget>[
-                fullNameField,
-                SizedBox(height: 10.0),
-                emailField,
-                SizedBox(height: 10.0),
-                passwordField,
-                SizedBox(height: 10.0),
-                mobileNumberField,
-                SizedBox(height: 10.0),
-                countryField,
-                SizedBox(height: 10.0),
-                stateField,
-                SizedBox(height: 10.0),
-                districtField,
-                SizedBox(height: 10.0),
-                cityField,
-                SizedBox(height: 10.0),
-                townField,
-                SizedBox(height: 10.0),
-                bloodGroupField,
-                SizedBox(height: 10.0),
-                pincodeField,
-                SizedBox(height: 10.0),
-                registerButon,
-              ],
-            ),
-          )),
-        ),
+          actions: [
+            IconButton(
+              icon: Icon(Icons.home),
+              onPressed: () {
+                Navigator.push(
+                  context,
+                  MaterialPageRoute(
+                      builder: (context) => AskForLoginOrSignUp()),
+                );
+              },
+            )
+          ]),
+      body: Container(
+        height: double.infinity,
+        width: double.infinity,
+        decoration: BoxDecoration(
+            gradient:
+                LinearGradient(colors: [Colors.red[100], Colors.red[200]])),
+        child: Center(
+            child: Padding(
+          padding: const EdgeInsets.all(36.0),
+          child: ListView(
+            shrinkWrap: true,
+            children: <Widget>[
+              fullNameField,
+              SizedBox(height: 10.0),
+              emailField,
+              SizedBox(height: 10.0),
+              passwordField,
+              SizedBox(height: 10.0),
+              mobileNumberField,
+              SizedBox(height: 10.0),
+              countryField,
+              SizedBox(height: 10.0),
+              stateField,
+              SizedBox(height: 10.0),
+              districtField,
+              SizedBox(height: 10.0),
+              cityField,
+              SizedBox(height: 10.0),
+              townField,
+              SizedBox(height: 10.0),
+              bloodGroupField,
+              SizedBox(height: 10.0),
+              pincodeField,
+              SizedBox(height: 10.0),
+              registerButon,
+            ],
+          ),
+        )),
+      ),
 //        floatingActionButton: Container(
 //            height: 100.0,
 //            width: 100.0,

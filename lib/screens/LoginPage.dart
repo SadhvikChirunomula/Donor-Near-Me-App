@@ -4,6 +4,8 @@ import 'package:dnmui/screens/DonorRequestPage.dart';
 import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
 
+import 'AskForLoginOrSignUp.dart';
+
 class LoginPage extends StatefulWidget {
   LoginPage({Key key, this.title}) : super(key: key);
 
@@ -66,7 +68,9 @@ class _LoginPageState extends State<LoginPage> {
             });
             Navigator.push(
               context,
-              MaterialPageRoute(builder: (context) => DonorRequestPage(mailid: emailFieldController.text)),
+              MaterialPageRoute(
+                  builder: (context) =>
+                      DonorRequestPage(mailid: emailFieldController.text)),
             );
           } else {
             setState(() {
@@ -84,11 +88,22 @@ class _LoginPageState extends State<LoginPage> {
 
     return Scaffold(
       appBar: AppBar(
-        title: Text('Login'),
-        backgroundColor: Colors.redAccent,
-        brightness: Brightness.dark,
-        centerTitle: true,
-      ),
+          title: Text('Login'),
+          backgroundColor: Colors.redAccent,
+          brightness: Brightness.dark,
+          centerTitle: true,
+          actions: [
+            IconButton(
+              icon: Icon(Icons.home),
+              onPressed: () {
+                Navigator.push(
+                  context,
+                  MaterialPageRoute(
+                      builder: (context) => AskForLoginOrSignUp()),
+                );
+              },
+            )
+          ]),
       body: Container(
         height: double.infinity,
         width: double.infinity,
@@ -121,8 +136,11 @@ class _LoginPageState extends State<LoginPage> {
                   child: Text(
                 error,
                 textAlign: TextAlign.right,
-                style:
-                    TextStyle(color: Colors.red, fontFamily: 'Open Sans',fontSize: 15, fontWeight: FontWeight.bold),
+                style: TextStyle(
+                    color: Colors.red,
+                    fontFamily: 'Open Sans',
+                    fontSize: 15,
+                    fontWeight: FontWeight.bold),
               )),
               SizedBox(
                 height: 35.0,

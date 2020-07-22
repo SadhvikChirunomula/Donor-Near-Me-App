@@ -70,6 +70,17 @@ class AskForLoginOrSignUp extends StatelessWidget {
           backgroundColor: Colors.red,
           brightness: Brightness.dark,
           centerTitle: true,
+            actions: [
+              IconButton(
+                icon : Icon(Icons.share),
+                onPressed: () {
+//                  Navigator.push(
+//                    context,
+//                    MaterialPageRoute(builder: (context) => DonorRequestPage(mailid :"1234")),
+//                  );
+                },
+              )
+            ]
         ),
         body: Container(
           height: double.infinity,
