@@ -65,12 +65,12 @@ class AskForLoginOrSignUp extends StatelessWidget {
     );
 
     return Scaffold(
-//        appBar: AppBar(
-//          title: Text('Welcome To Donor Near Me'),
-//          backgroundColor: Colors.redAccent,
-//          brightness: Brightness.dark,
-//          centerTitle: true,
-//        ),
+        appBar: AppBar(
+          title: Text('Welcome To Donor Near Me'),
+          backgroundColor: Colors.red,
+          brightness: Brightness.dark,
+          centerTitle: true,
+        ),
         body: Container(
           height: double.infinity,
           width: double.infinity,
@@ -88,19 +88,6 @@ class AskForLoginOrSignUp extends StatelessWidget {
             child: ListView(
               shrinkWrap: true,
               children: <Widget>[
-                new Text(
-                  'Welcome To Donor Near Me',
-                  textAlign: TextAlign.center,
-                  style: new TextStyle(
-//                      backgroundColor: Colors. ,
-                      color: Colors.black,
-                      fontWeight: FontWeight.bold,
-                      fontSize: 30.0,
-                      fontFamily: 'Open Sans'),
-                ),
-                SizedBox(
-                  height: 25.0,
-                ),
                 SizedBox(
                   child: Image.asset(
                     "assets/logo.png",
@@ -132,7 +119,7 @@ class AskForLoginOrSignUp extends StatelessWidget {
             child: FloatingActionButton(
               child: Text("Contact Us"),
               onPressed: () {
-                print("Thankyou for the comment!!");
+                print("Taking you to Contact Us Page");
                 Navigator.push(
                   context,
                   MaterialPageRoute(builder: (context) => ContactUsPage()),

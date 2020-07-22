@@ -1,37 +1,36 @@
 import 'package:flutter/material.dart';
 
-import 'SettingsPage.dart';
+import 'DonorRequestPage.dart';
 
-class DonorRequestPage extends StatefulWidget {
-  DonorRequestPage({Key key, this.title}) : super(key: key);
+class SettingsPage extends StatefulWidget {
+  SettingsPage({Key key, this.title}) : super(key: key);
 
   final String title;
 
   @override
-  _DonorRequestPageState createState() => _DonorRequestPageState();
+  _SettingsPageState createState() => _SettingsPageState();
 }
 
-class _DonorRequestPageState extends State<DonorRequestPage> {
+class _SettingsPageState extends State<SettingsPage> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
         actions: [
           IconButton(
-            icon : Icon(Icons.settings),
+            icon : Icon(Icons.home),
             onPressed: () {
               Navigator.push(
                 context,
-                MaterialPageRoute(builder: (context) => SettingsPage()),
+                MaterialPageRoute(builder: (context) => DonorRequestPage()),
               );
             },
           )
         ],
-        title: Text('Donor Request Page'),
+        title: Text('Settings'),
         backgroundColor: Colors.redAccent,
         brightness: Brightness.dark,
         centerTitle: true,
-//        leading: Icon(Icons.menu),
       ),
     );
   }

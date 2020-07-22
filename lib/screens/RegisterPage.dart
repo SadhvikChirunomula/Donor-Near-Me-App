@@ -115,8 +115,10 @@ class _RegisterPageState extends State<RegisterPage> {
         isExpanded: true,
         hint: Text('Country'),
         value: country,
+        dropdownColor: Colors.red[100],
         icon: Icon(Icons.keyboard_arrow_down),
-        style: TextStyle(color: Colors.deepPurple),
+        style: TextStyle(color: Colors.black ,fontWeight: FontWeight.normal),
+        underline: SizedBox(),
         onChanged: (String newValue) async {
           var response = await http.get(
               'http://35.238.212.200:8080/getlist/states?country=' + newValue);
@@ -390,14 +392,15 @@ class _RegisterPageState extends State<RegisterPage> {
             ),
           )),
         ),
-        floatingActionButton: Container(
-            height: 100.0,
-            width: 100.0,
-            child: FloatingActionButton(
-              child: Text("Comment"),
-              onPressed: () {
-                print("Thankyou for the comment!!");
-              },
-            )));
+//        floatingActionButton: Container(
+//            height: 100.0,
+//            width: 100.0,
+//            child: FloatingActionButton(
+//              child: Text("Comment"),
+//              onPressed: () {
+//                print("Thankyou for the comment!!");
+//              },
+//            ))
+    );
   }
 }

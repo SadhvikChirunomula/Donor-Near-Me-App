@@ -50,7 +50,6 @@ class _LoginPageState extends State<LoginPage> {
         minWidth: MediaQuery.of(context).size.width,
         padding: EdgeInsets.fromLTRB(20.0, 15.0, 20.0, 15.0),
         onPressed: () async {
-          print('Hello World');
           http.Response response = await http.post(
               'http://35.238.212.200:8080/authenticate',
               headers: <String, String>{
@@ -60,10 +59,13 @@ class _LoginPageState extends State<LoginPage> {
                 'mailid': emailFieldController.text,
                 'password': passwordFieldController.text
               }));
-          print(response.body);
+//          print(response.body);
           Map<String, dynamic> data = json.decode(response.body);
           if (data['error'] == null) {
-            print(data['status']);
+//            print(data['status']);
+            setState(() {
+              error = '';
+            });
             Navigator.push(
               context,
               MaterialPageRoute(builder: (context) => DonorRequestPage()),
