@@ -17,6 +17,7 @@ class _LoginPageState extends State<LoginPage> {
   TextStyle style = TextStyle(fontFamily: 'Montserrat', fontSize: 20.0);
   TextEditingController emailFieldController = new TextEditingController();
   TextEditingController passwordFieldController = new TextEditingController();
+  String error = '';
 
   @override
   Widget build(BuildContext context) {
@@ -40,6 +41,7 @@ class _LoginPageState extends State<LoginPage> {
           border:
               OutlineInputBorder(borderRadius: BorderRadius.circular(32.0))),
     );
+
     final loginButon = Material(
       elevation: 5.0,
       borderRadius: BorderRadius.circular(30.0),
@@ -67,6 +69,9 @@ class _LoginPageState extends State<LoginPage> {
               MaterialPageRoute(builder: (context) => DonorRequestPage()),
             );
           } else {
+            setState(() {
+              error = data['error'];
+            });
             print(data['error']);
           }
         },
@@ -112,6 +117,13 @@ class _LoginPageState extends State<LoginPage> {
               emailField,
               SizedBox(height: 25.0),
               passwordField,
+              SizedBox(
+                  child: Text(
+                error,
+                textAlign: TextAlign.right,
+                style:
+                    TextStyle(color: Colors.red, fontFamily: 'Open Sans',fontSize: 15, fontWeight: FontWeight.bold),
+              )),
               SizedBox(
                 height: 35.0,
               ),

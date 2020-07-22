@@ -99,7 +99,7 @@ class AskForLoginOrSignUp extends StatelessWidget {
                       fontFamily: 'Open Sans'),
                 ),
                 SizedBox(
-                  height: 15.0,
+                  height: 25.0,
                 ),
                 SizedBox(
                   child: Image.asset(
