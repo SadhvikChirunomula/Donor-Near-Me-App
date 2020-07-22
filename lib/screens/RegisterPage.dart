@@ -338,7 +338,9 @@ class _RegisterPageState extends State<RegisterPage> {
       child: MaterialButton(
         minWidth: MediaQuery.of(context).size.width,
         padding: EdgeInsets.fromLTRB(20.0, 15.0, 20.0, 15.0),
-        onPressed: () async {},
+        onPressed: () async {
+
+        },
         child: Text("Register",
             textAlign: TextAlign.center,
             style: style.copyWith(

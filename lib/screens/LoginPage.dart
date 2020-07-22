@@ -59,16 +59,14 @@ class _LoginPageState extends State<LoginPage> {
                 'mailid': emailFieldController.text,
                 'password': passwordFieldController.text
               }));
-//          print(response.body);
           Map<String, dynamic> data = json.decode(response.body);
           if (data['error'] == null) {
-//            print(data['status']);
             setState(() {
               error = '';
             });
             Navigator.push(
               context,
-              MaterialPageRoute(builder: (context) => DonorRequestPage()),
+              MaterialPageRoute(builder: (context) => DonorRequestPage(mailid: emailFieldController.text)),
             );
           } else {
             setState(() {

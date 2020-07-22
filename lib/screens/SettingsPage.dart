@@ -22,7 +22,7 @@ class _SettingsPageState extends State<SettingsPage> {
             onPressed: () {
               Navigator.push(
                 context,
-                MaterialPageRoute(builder: (context) => DonorRequestPage()),
+                MaterialPageRoute(builder: (context) => DonorRequestPage(mailid :"1234")),
               );
             },
           )

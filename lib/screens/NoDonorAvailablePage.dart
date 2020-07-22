@@ -1,56 +1,45 @@
-import 'dart:convert';
-
 import 'package:flutter/material.dart';
-import 'package:http/http.dart' as http;
-import 'package:json_table/json_table.dart';
 
+class NoDonorAvailablePage extends StatefulWidget {
+  NoDonorAvailablePage({Key key, this.title}) : super(key: key);
 
-
-class DonorListPage extends StatefulWidget {
-  final List<Map> donorList;
+  final String title;
 
   @override
-  DonorListPage({Key key, @required this.donorList}) : super(key: key);
-
-  @override
-  _DonorListPageState createState() => _DonorListPageState(donorList);
+  _NoDonorAvailablePageState createState() => _NoDonorAvailablePageState();
 }
 
-class _DonorListPageState extends State<DonorListPage> {
-  List<Map> donorList;
-  _DonorListPageState(this.donorList);
-
+class _NoDonorAvailablePageState extends State<NoDonorAvailablePage> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: Text('Donors Available'),
+        title: Text('No Donor Available'),
         backgroundColor: Colors.redAccent,
         brightness: Brightness.dark,
         centerTitle: true,
       ),
-        body: Container(
+      body: Container(
           height: double.infinity,
           width: double.infinity,
           decoration: BoxDecoration(
               gradient: LinearGradient(colors: [
-                Colors.red[100],
-                Colors.white,
-                Colors.red[50],
-              ])),
+            Colors.red[100],
+            Colors.white,
+            Colors.red[50],
+          ])),
           child: Center(
               child: Padding(
                 padding: const EdgeInsets.all(36.0),
                 child: ListView(
                   shrinkWrap: true,
                   children: <Widget>[
-
-                    for(Map x in donorList) Text(x['mailid'])
+                    Text('We are sorry, but we dont have any users in the location Specified. We really hope that we help you better.')
                   ],
                 ),
               )
           ),
-        ),
+      ),
     );
   }
 }
