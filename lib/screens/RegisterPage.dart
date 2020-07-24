@@ -3,6 +3,7 @@ import 'dart:convert';
 import 'package:dnmui/screens/OtpVerifyPage.dart';
 import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
+import 'package:searchable_dropdown/searchable_dropdown.dart';
 
 import 'AskForLoginOrSignUp.dart';
 
@@ -153,14 +154,16 @@ class _RegisterPageState extends State<RegisterPage> {
         border: Border.all(
             color: Colors.black, style: BorderStyle.solid, width: 0.50),
       ),
-      child: DropdownButton<String>(
-        isExpanded: true,
+      child: SearchableDropdown.single(
+        items: statesList.map<DropdownMenuItem<String>>((String value) {
+          return DropdownMenuItem<String>(
+            value: value,
+            child: Text(value),
+          );
+        }).toList(),
         value: state,
         hint: Text('State'),
-        icon: Icon(Icons.keyboard_arrow_down),
-        iconSize: 24,
-        elevation: 16,
-        style: TextStyle(color: Colors.black),
+        searchHint: null,
         onChanged: (String newValue) async {
           var response = await http.get(
               'http://35.238.212.200:8080/getlist/districts?state=' + newValue);
@@ -174,12 +177,9 @@ class _RegisterPageState extends State<RegisterPage> {
             }
           });
         },
-        items: statesList.map<DropdownMenuItem<String>>((String value) {
-          return DropdownMenuItem<String>(
-            value: value,
-            child: Text(value),
-          );
-        }).toList(),
+        dialogBox: false,
+        isExpanded: true,
+        menuConstraints: BoxConstraints.tight(Size.fromHeight(350)),
       ),
     );
     final districtField = Container(

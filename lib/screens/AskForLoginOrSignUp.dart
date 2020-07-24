@@ -1,12 +1,41 @@
+import 'dart:async';
+
 import 'package:flutter/material.dart';
+import 'package:flutter_share/flutter_share.dart';
+import 'package:splashscreen/splashscreen.dart';
 
 import 'ContactUsPage.dart';
-import 'file:///F:/dnmuiapp/dnmui/lib/screens/LoginPage.dart';
-import 'file:///F:/dnmuiapp/dnmui/lib/screens/RegisterPage.dart';
-
 import 'FactsPage.dart';
+import 'LoginPage.dart';
+import 'RegisterPage.dart';
 
-class AskForLoginOrSignUp extends StatelessWidget {
+class AskForLoginOrSignUp extends StatefulWidget {
+  @override
+  _AskForLoginOrSignUp createState() => new _AskForLoginOrSignUp();
+}
+
+class _AskForLoginOrSignUp extends State<AskForLoginOrSignUp> {
+  @override
+  Widget build(BuildContext context) {
+    return new SplashScreen(
+        seconds: 4,
+        navigateAfterSeconds: new AfterSplash(),
+        title: new Text(
+          'Welcome to Donor Near Me',
+          style: new TextStyle(fontWeight: FontWeight.bold, fontSize: 25.0),
+        ),
+        image: new Image.asset("assets/logo.png"),
+        backgroundColor: Colors.white,
+        styleTextUnderTheLoader: new TextStyle(),
+        photoSize: 100.0,
+        onClick: () => print("Donor Near Me"),
+        loaderColor: Colors.red);
+  }
+}
+
+class AfterSplash extends StatelessWidget {
+
+
   @override
   Widget build(BuildContext context) {
     final loginButon = Material(
@@ -29,8 +58,8 @@ class AskForLoginOrSignUp extends StatelessWidget {
     );
     final registerButon = Material(
       elevation: 5.0,
-      borderRadius: BorderRadius.circular(30.0),
       color: Colors.greenAccent,
+      borderRadius: BorderRadius.circular(30.0),
       child: MaterialButton(
         minWidth: MediaQuery.of(context).size.width,
         padding: EdgeInsets.fromLTRB(20.0, 15.0, 20.0, 15.0),
@@ -64,24 +93,29 @@ class AskForLoginOrSignUp extends StatelessWidget {
       ),
     );
 
+    Future<void> share() async {
+      await FlutterShare.share(
+          title: 'Donor Near Me',
+          text: 'Click on the URL below to download the App',
+          linkUrl: 'http://donornearme.com/',
+          chooserTitle: 'Find a blood donor near you!'
+      );
+    }
+
     return Scaffold(
         appBar: AppBar(
-          title: Text('Welcome To Donor Near Me'),
-          backgroundColor: Colors.red,
-          brightness: Brightness.dark,
-          centerTitle: true,
+            title: Text('Welcome To Donor Near Me'),
+            backgroundColor: Colors.red,
+            brightness: Brightness.dark,
+            centerTitle: true,
             actions: [
               IconButton(
-                icon : Icon(Icons.share),
+                icon: Icon(Icons.share),
                 onPressed: () {
-//                  Navigator.push(
-//                    context,
-//                    MaterialPageRoute(builder: (context) => DonorRequestPage(mailid :"1234")),
-//                  );
+                  share();
                 },
               )
-            ]
-        ),
+            ]),
         body: Container(
           height: double.infinity,
           width: double.infinity,
