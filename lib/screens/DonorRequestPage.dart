@@ -2,6 +2,7 @@ import 'dart:convert';
 
 import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
+import 'package:searchable_dropdown/searchable_dropdown.dart';
 
 import 'DonorListPage.dart';
 import 'NoDonorAvailablePage.dart';
@@ -82,13 +83,12 @@ class _DonorRequestPageState extends State<DonorRequestPage> {
         border: Border.all(
             color: Colors.black, style: BorderStyle.solid, width: 0.50),
       ),
-      child: DropdownButton<String>(
+      child: SearchableDropdown.single(
         isExpanded: true,
         value: state,
         hint: Text('State'),
         icon: Icon(Icons.keyboard_arrow_down),
         iconSize: 24,
-        elevation: 16,
         style: TextStyle(color: Colors.black),
         onChanged: (String newValue) async {
           var response = await http.get(
@@ -119,13 +119,12 @@ class _DonorRequestPageState extends State<DonorRequestPage> {
             color: Colors.black, style: BorderStyle.solid, width: 0.50),
       ),
       width: double.infinity,
-      child: DropdownButton<String>(
+      child: SearchableDropdown.single(
         isExpanded: true,
         value: district,
         hint: Text('District'),
         icon: Icon(Icons.keyboard_arrow_down),
         iconSize: 24,
-        elevation: 16,
         style: TextStyle(color: Colors.black),
         onChanged: (String newValue) async {
           var response = await http.get(
@@ -156,13 +155,12 @@ class _DonorRequestPageState extends State<DonorRequestPage> {
             color: Colors.black, style: BorderStyle.solid, width: 0.50),
       ),
       width: double.infinity,
-      child: DropdownButton<String>(
+      child: SearchableDropdown.single(
         isExpanded: true,
         value: city,
         hint: Text('City'),
         icon: Icon(Icons.keyboard_arrow_down),
         iconSize: 24,
-        elevation: 16,
         style: TextStyle(color: Colors.black),
         onChanged: (String newValue) async {
           var response = await http
@@ -193,13 +191,12 @@ class _DonorRequestPageState extends State<DonorRequestPage> {
         border: Border.all(
             color: Colors.black, style: BorderStyle.solid, width: 0.50),
       ),
-      child: DropdownButton<String>(
+      child: SearchableDropdown.single(
         isExpanded: true,
         value: town,
         hint: Text('Town'),
         icon: Icon(Icons.keyboard_arrow_down),
         iconSize: 24,
-        elevation: 16,
         style: TextStyle(color: Colors.black),
         onChanged: (String newValue) async {
           var response =
@@ -230,13 +227,12 @@ class _DonorRequestPageState extends State<DonorRequestPage> {
         border: Border.all(
             color: Colors.black, style: BorderStyle.solid, width: 0.50),
       ),
-      child: DropdownButton<String>(
+      child: SearchableDropdown.single(
         isExpanded: true,
         value: bloodGroup,
         hint: Text('Blood Group'),
         icon: Icon(Icons.keyboard_arrow_down),
         iconSize: 24,
-        elevation: 16,
         style: TextStyle(color: Colors.black),
         onChanged: (String newValue) {
           setState(() {

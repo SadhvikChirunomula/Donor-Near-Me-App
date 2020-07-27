@@ -138,7 +138,7 @@ class _RegisterPageState extends State<RegisterPage> {
             }
           });
         },
-        items: <String>['India'].map<DropdownMenuItem<String>>((String value) {
+        items: countriesList.map<DropdownMenuItem<String>>((String value) {
           return DropdownMenuItem<String>(
             value: value,
             child: Text(value),
@@ -190,13 +190,18 @@ class _RegisterPageState extends State<RegisterPage> {
             color: Colors.black, style: BorderStyle.solid, width: 0.50),
       ),
       width: double.infinity,
-      child: DropdownButton<String>(
+      child: SearchableDropdown.single(
+        items: districtList.map<DropdownMenuItem<String>>((String value) {
+          return DropdownMenuItem<String>(
+            value: value,
+            child: Text(value),
+          );
+        }).toList(),
         isExpanded: true,
         value: district,
         hint: Text('District'),
         icon: Icon(Icons.keyboard_arrow_down),
         iconSize: 24,
-        elevation: 16,
         style: TextStyle(color: Colors.black),
         onChanged: (String newValue) async {
           var response = await http.get(
@@ -211,12 +216,6 @@ class _RegisterPageState extends State<RegisterPage> {
             }
           });
         },
-        items: districtList.map<DropdownMenuItem<String>>((String value) {
-          return DropdownMenuItem<String>(
-            value: value,
-            child: Text(value),
-          );
-        }).toList(),
       ),
     );
     final cityField = Container(
@@ -227,13 +226,18 @@ class _RegisterPageState extends State<RegisterPage> {
             color: Colors.black, style: BorderStyle.solid, width: 0.50),
       ),
       width: double.infinity,
-      child: DropdownButton<String>(
+      child: SearchableDropdown.single(
+        items: citiesList.map<DropdownMenuItem<String>>((String value) {
+          return DropdownMenuItem<String>(
+            value: value,
+            child: Text(value),
+          );
+        }).toList(),
         isExpanded: true,
         value: city,
         hint: Text('City'),
         icon: Icon(Icons.keyboard_arrow_down),
         iconSize: 24,
-        elevation: 16,
         style: TextStyle(color: Colors.black),
         onChanged: (String newValue) async {
           var response = await http
@@ -248,12 +252,6 @@ class _RegisterPageState extends State<RegisterPage> {
             }
           });
         },
-        items: citiesList.map<DropdownMenuItem<String>>((String value) {
-          return DropdownMenuItem<String>(
-            value: value,
-            child: Text(value),
-          );
-        }).toList(),
       ),
     );
     final townField = Container(
@@ -264,13 +262,18 @@ class _RegisterPageState extends State<RegisterPage> {
         border: Border.all(
             color: Colors.black, style: BorderStyle.solid, width: 0.50),
       ),
-      child: DropdownButton<String>(
+      child: SearchableDropdown.single(
+        items: townsList.map<DropdownMenuItem<String>>((String value) {
+          return DropdownMenuItem<String>(
+            value: value,
+            child: Text(value),
+          );
+        }).toList(),
         isExpanded: true,
         value: town,
         hint: Text('Town'),
         icon: Icon(Icons.keyboard_arrow_down),
         iconSize: 24,
-        elevation: 16,
         style: TextStyle(color: Colors.black),
         onChanged: (String newValue) async {
           var response =
@@ -285,12 +288,6 @@ class _RegisterPageState extends State<RegisterPage> {
             }
           });
         },
-        items: townsList.map<DropdownMenuItem<String>>((String value) {
-          return DropdownMenuItem<String>(
-            value: value,
-            child: Text(value),
-          );
-        }).toList(),
       ),
     );
     final bloodGroupField = Container(

@@ -35,7 +35,6 @@ class _AskForLoginOrSignUp extends State<AskForLoginOrSignUp> {
 
 class AfterSplash extends StatelessWidget {
 
-
   @override
   Widget build(BuildContext context) {
     final loginButon = Material(
