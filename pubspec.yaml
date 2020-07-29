@@ -40,7 +40,14 @@ dev_dependencies:
   flutter_test:
     sdk: flutter
   http: 0.12.2
-  progress_state_button: 1.0.1
+  firebase_messaging: 6.0.16
+  call_number: 0.0.1
+  auto_size_text: 2.1.0
+  flutter_slidable: 0.5.5
+  rflutter_alert: 1.0.3
+
+
+
 
 
 # For information on the generic Dart part of this file, see the

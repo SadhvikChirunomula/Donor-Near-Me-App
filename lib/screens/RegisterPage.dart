@@ -4,7 +4,7 @@ import 'package:dnmui/screens/OtpVerifyPage.dart';
 import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
 import 'package:searchable_dropdown/searchable_dropdown.dart';
-
+import 'package:firebase_messaging/firebase_messaging.dart';
 import 'AskForLoginOrSignUp.dart';
 
 class RegisterPage extends StatefulWidget {
@@ -36,25 +36,35 @@ class _RegisterPageState extends State<RegisterPage> {
   List<String> townsList = [];
   List<String> bloodGroupsList = [];
   TextEditingController pincodeFieldController = new TextEditingController();
+  FirebaseMessaging _firebaseMessaging = FirebaseMessaging();
 
   @override
   void initState() {
     // TODO: implement initState
     super.initState();
-    getCountriesList(); // When you first open the home screen then this method is run for the first time too
+    getCountriesList();
   }
 
   Future<void> getCountriesList() async {
     String baseUrl = "http://35.238.212.200:8080/getlist/countries";
     final response = await http.get(baseUrl);
     final Map<String, dynamic> data = json.decode(response.body);
-//    print(data['countriesList']['country']);
     var jsonList = data['countriesList']['country'];
     countriesList = [];
     for (String x in jsonList) {
       countriesList.add(x);
     }
-//    print(countriesList);
+  }
+
+  String fcmtoken='';
+
+
+
+  _firebaseRegister() {
+    _firebaseMessaging.getToken().then(
+            (token) =>
+        fcmtoken = token
+    );
   }
 
   @override
@@ -340,6 +350,8 @@ class _RegisterPageState extends State<RegisterPage> {
         minWidth: MediaQuery.of(context).size.width,
         padding: EdgeInsets.fromLTRB(20.0, 15.0, 20.0, 15.0),
         onPressed: () async {
+          _firebaseRegister();
+          print("Token of the User is :"+fcmtoken);
           String userDetailsJson = jsonEncode(<String, String>{
             'bloodgroup': bloodGroup,
             'city': city,
@@ -354,6 +366,7 @@ class _RegisterPageState extends State<RegisterPage> {
             'state': state,
             'town': town,
             'username': fullNameFieldController.text,
+            'fcmtoken':fcmtoken
           });
           print(userDetailsJson);
           http.Response response =

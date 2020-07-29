@@ -1,5 +1,6 @@
 import 'dart:convert';
 
+import 'package:dnmui/screens/UserNotfiyPage.dart';
 import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
 import 'package:searchable_dropdown/searchable_dropdown.dart';
@@ -32,7 +33,23 @@ class _DonorRequestPageState extends State<DonorRequestPage> {
   List<String> townsList = [];
   List<String> bloodGroupsList = [];
   List<Map> donorList = [];
+
   _DonorRequestPageState(this.mailid);
+  TextEditingController messageFieldController = new TextEditingController();
+
+  Widget _messageBox(){
+    return Container(
+        width: double.infinity,
+        child: TextField(
+          controller: messageFieldController,
+          obscureText: false,
+          decoration: InputDecoration(
+              contentPadding: EdgeInsets.fromLTRB(20.0, 15.0, 20.0, 15.0),
+              hintText: "Message",
+              border: OutlineInputBorder(
+                  borderRadius: BorderRadius.circular(32.0))),
+        ));
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -75,7 +92,7 @@ class _DonorRequestPageState extends State<DonorRequestPage> {
         }).toList(),
       ),
     );
-    final stateField = Container(
+    var stateField = Container(
       width: double.infinity,
       padding: EdgeInsets.symmetric(horizontal: 10.0),
       decoration: BoxDecoration(
@@ -235,6 +252,7 @@ class _DonorRequestPageState extends State<DonorRequestPage> {
         iconSize: 24,
         style: TextStyle(color: Colors.black),
         onChanged: (String newValue) {
+          bloodGroup = '';
           setState(() {
             bloodGroup = newValue;
             print(bloodGroup);
@@ -256,8 +274,31 @@ class _DonorRequestPageState extends State<DonorRequestPage> {
         minWidth: MediaQuery.of(context).size.width,
         padding: EdgeInsets.fromLTRB(20.0, 15.0, 20.0, 15.0),
         onPressed: () async {
-          print('http://35.238.212.200:8080/getdonors/available?country='+country+'&state='+state+'&district='+district+'&city='+city+'&bloodgroup='+bloodGroup+'&town='+town);
-          var response = await http.get('http://35.238.212.200:8080/getdonors/available?country='+country+'&state='+state+'&district='+district+'&city='+city+'&bloodgroup='+bloodGroup+'&town='+town);
+          print('http://35.238.212.200:8080/getdonors/available?country=' +
+              country +
+              '&state=' +
+              state +
+              '&district=' +
+              district +
+              '&city=' +
+              city +
+              '&bloodgroup=' +
+              bloodGroup +
+              '&town=' +
+              town);
+          var response = await http.get(
+              'http://35.238.212.200:8080/getdonors/available?country=' +
+                  country +
+                  '&state=' +
+                  state +
+                  '&district=' +
+                  district +
+                  '&city=' +
+                  city +
+                  '&bloodgroup=' +
+                  bloodGroup +
+                  '&town=' +
+                  town);
           Map<String, dynamic> data = json.decode(response.body);
           setState(() {
             var jsonList = data['donorsList'];
@@ -265,17 +306,19 @@ class _DonorRequestPageState extends State<DonorRequestPage> {
             for (Map x in jsonList) {
               donorList.add(x);
             }
+            print(donorList);
           });
           print(donorList.length);
-          if(donorList.length==0){
+          if (donorList.length == 0) {
             Navigator.push(
               context,
               MaterialPageRoute(builder: (context) => NoDonorAvailablePage()),
             );
-          }else{
+          } else {
             Navigator.push(
               context,
-              MaterialPageRoute(builder: (context) => DonorListPage(donorList: donorList)),
+              MaterialPageRoute(
+                  builder: (context) => DonorListPage(donorList: donorList, mailid: mailid)),
             );
           }
         },
@@ -285,7 +328,36 @@ class _DonorRequestPageState extends State<DonorRequestPage> {
         ),
       ),
     );
-
+    final notificationsButon = Material(
+      elevation: 5.0,
+      borderRadius: BorderRadius.circular(30.0),
+      color: Color(0xff01A0C7),
+      child: MaterialButton(
+        minWidth: MediaQuery.of(context).size.width,
+        padding: EdgeInsets.fromLTRB(20.0, 15.0, 20.0, 15.0),
+        onPressed: () async {
+          String baseUrl =
+              "http://35.238.212.200:8080/getbloodrequests?mailid=" + mailid;
+          final response = await http.get(baseUrl);
+          Map<String, dynamic> data = json.decode(response.body);
+          var jsonList = data['requestsList'];
+          List<Map> bloodRequestsList = [];
+          for (Map x in jsonList) {
+            print(bloodRequestsList);
+            bloodRequestsList.add(x);
+          }
+          Navigator.push(
+            context,
+            MaterialPageRoute(
+                builder: (context) => UserNotifyPage(mailid: mailid, bloodRequestsList: bloodRequestsList)),
+          );
+        },
+        child: Text(
+          "Blood Requests",
+          textAlign: TextAlign.center,
+        ),
+      ),
+    );
     return Scaffold(
         appBar: AppBar(
           actions: [
@@ -318,7 +390,9 @@ class _DonorRequestPageState extends State<DonorRequestPage> {
               child: ListView(
                 shrinkWrap: true,
                 children: <Widget>[
-                  Text("Hello User " + mailid),
+                  Text("Hello User " + mailid,style: TextStyle(fontSize: 18)),
+                  SizedBox(height: 10.0),
+                  notificationsButon,
                   SizedBox(height: 10.0),
                   countryField,
                   SizedBox(height: 10.0),

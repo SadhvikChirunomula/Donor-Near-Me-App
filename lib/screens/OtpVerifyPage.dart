@@ -47,7 +47,8 @@ class _OtpVerifyPageState extends State<OtpVerifyPage> {
       'sms_notification': userDetailsMap['sms_notification'],
       'state': userDetailsMap['state'],
       'town': userDetailsMap['town'],
-      'username': userDetailsMap['username']
+      'username': userDetailsMap['username'],
+      'fcmtoken': userDetailsMap['fcmtoken']
     };
   }
 
@@ -120,7 +121,8 @@ class _OtpVerifyPageState extends State<OtpVerifyPage> {
                       'sms_notification': userDetailsMap['sms_notification'],
                       'state': userDetailsMap['state'],
                       'town': userDetailsMap['town'],
-                      'username': userDetailsMap['username']
+                      'username': userDetailsMap['username'],
+                      'fcmtoken': userDetailsMap['fcmtoken']
                     }));
 
             print("Add User Response " + response.body);

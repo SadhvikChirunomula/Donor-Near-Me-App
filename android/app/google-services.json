@@ -1,0 +1,40 @@
+{
+  "project_info": {
+    "project_number": "933978037684",
+    "firebase_url": "https://leafy-tractor-267504.firebaseio.com",
+    "project_id": "leafy-tractor-267504",
+    "storage_bucket": "leafy-tractor-267504.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:933978037684:android:5774d417c0ae49358a26e1",
+        "android_client_info": {
+          "package_name": "com.example.dnmapp"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "933978037684-huho18bhnf0ttko2iols776a26olm6k8.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyC076lum90o5n7Xic7HyQc6RyIWdek8cVo"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "933978037684-huho18bhnf0ttko2iols776a26olm6k8.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
