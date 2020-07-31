@@ -17,6 +17,8 @@ class OtpVerifyPage extends StatefulWidget {
 
 class _OtpVerifyPageState extends State<OtpVerifyPage> {
   String userDetails;
+  _OtpVerifyPageState(this.userDetails);
+
   TextEditingController otpFieldController = new TextEditingController();
   String error = '';
   String addedUserStatus = 'Please Verify Email..';
@@ -31,7 +33,7 @@ class _OtpVerifyPageState extends State<OtpVerifyPage> {
     ),
   );
 
-  _OtpVerifyPageState(this.userDetails);
+
 
   Map<String, dynamic> _userDetailsMapToJson(Map userDetailsMap) {
     return <String, dynamic>{
