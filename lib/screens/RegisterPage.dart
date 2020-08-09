@@ -1,5 +1,6 @@
 import 'dart:convert';
 
+import 'package:dnmui/screens/OnOTPVerificationSuccess.dart';
 import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
@@ -11,7 +12,6 @@ import 'package:sms/sms.dart';
 
 import 'AskForLoginOrSignUp.dart';
 import 'RegistrationSuccessSplashScreen.dart';
-//import FirebaseInstanceID;
 
 class RegisterPage extends StatefulWidget {
   RegisterPage({Key key, this.title}) : super(key: key);
@@ -30,136 +30,76 @@ class _RegisterPageState extends State<RegisterPage> {
   TextEditingController mobileNumberFieldController =
       new TextEditingController();
   String otp = '';
-  String country;
-  String state;
-  String district;
-  String city;
-  String town;
   String bloodGroup;
-  List<String> countriesList = [];
-  List<String> statesList = [];
-  List<String> districtList = [];
-  List<String> citiesList = [];
-  List<String> townsList = [];
   List<String> bloodGroupsList = [];
-  TextEditingController pincodeFieldController = new TextEditingController();
   FirebaseMessaging _firebaseMessaging = FirebaseMessaging();
+  String userDetailsJson= '';
+  String fcmtoken = '';
+  String error = 'Please Enter OTP';
+  bool wrongOtp = false;
+
 
   @override
   void initState() {
     // TODO: implement initState
     super.initState();
-    getCountriesList();
+    _getBloodGroupsList();
   }
 
-  Future<void> getCountriesList() async {
-    String baseUrl = "http://35.238.212.200:8080/getlist/countries";
-    final response = await http.get(baseUrl);
-    final Map<String, dynamic> data = json.decode(response.body);
-    var jsonList = data['countriesList']['country'];
-    countriesList = [];
-    for (String x in jsonList) {
-      countriesList.add(x);
+  _getBloodGroupsList() async {
+    var response =
+        await http.get('http://35.238.212.200:8080/getlist/bloodgroups');
+    Map<String, dynamic> data = json.decode(response.body);
+    bloodGroupsList = [];
+    setState(() {
+      var jsonList = data['bloodGroupsList']['blood_group'];
+      for (String x in jsonList) {
+        bloodGroupsList.add(x);
+      }
+    });
+  }
+
+  Map<String, dynamic> _userDetailsMapToJson(Map userDetailsMap) {
+    return <String, dynamic>{
+      'bloodgroup': userDetailsMap['bloodgroup'],
+      'mail_notification': userDetailsMap['mail_notification'],
+      'mailid': userDetailsMap['mailid'],
+      'password': userDetailsMap['password'],
+      'phonenumber': userDetailsMap['phonenumber'],
+      'sms_notification': userDetailsMap['sms_notification'],
+      'username': userDetailsMap['username'],
+      'fcmtoken': userDetailsMap['fcmtoken']
+    };
+  }
+
+  _validateOtp(Map userDetailsMap, String otp) async {
+    http.Response response = await http.post(
+        'http://35.238.212.200:8080/validateotp',
+        headers: <String, String>{
+          'Content-Type': 'application/json; charset=UTF-8',
+        },
+        body: jsonEncode(<String, String>{
+          'mailid': userDetailsMap['mailid'],
+          'otp': otp
+        }));
+    Map<String, dynamic> data = json.decode(response.body);
+    print(_userDetailsMapToJson(userDetailsMap));
+    if (data['error'] == null) {
+      Navigator.push(
+        context,
+        MaterialPageRoute(builder: (context) => OnOTPVerificationSuccessPage(userDetailsJson: userDetailsJson)),
+      );
+    } else {
+      setState(() {
+        wrongOtp = true;
+      });
+      wrongOtpEnteredAlert();
+      print("Wrong OTP Entered");
     }
   }
-
-  String fcmtoken = '';
 
   Widget _getOTPVerifyAlertPage(String userDetails) {
-    final Map userDetailsMap = jsonDecode(userDetails);
-    TextEditingController otpFieldController = new TextEditingController();
-    String error = 'Please Enter OTP';
-    bool wrongOtp = false;
-    Map<String, dynamic> _userDetailsMapToJson(Map userDetailsMap) {
-      return <String, dynamic>{
-        'bloodgroup': userDetailsMap['bloodgroup'],
-        'city': userDetailsMap['city'],
-        'country': userDetailsMap['country'],
-        'district': userDetailsMap['district'],
-        'mail_notification': userDetailsMap['mail_notification'],
-        'mailid': userDetailsMap['mailid'],
-        'password': userDetailsMap['password'],
-        'phonenumber': userDetailsMap['phonenumber'],
-        'pincode': userDetailsMap['pincode'],
-        'sms_notification': userDetailsMap['sms_notification'],
-        'state': userDetailsMap['state'],
-        'town': userDetailsMap['town'],
-        'username': userDetailsMap['username'],
-        'fcmtoken': userDetailsMap['fcmtoken']
-      };
-    }
-
-    Widget _enterOtpText(bool wrongOtp) {
-      if (wrongOtp) {
-        print("Please check OTP again 90");
-        return Text('Please check OTP again');
-      } else {
-        print("94");
-        return Text('Please Enter OTP');
-      }
-    }
-
-    Widget _wrongOtpEnteredMessage() {
-      return Text('Please check OTP again');
-    }
-
-    _validateOtp(Map userDetailsMap, String otp) async {
-      http.Response response = await http.post(
-          'http://35.238.212.200:8080/validateotp',
-          headers: <String, String>{
-            'Content-Type': 'application/json; charset=UTF-8',
-          },
-          body: jsonEncode(<String, String>{
-            'mailid': userDetailsMap['mailid'],
-            'otp': otp
-          }));
-      Map<String, dynamic> data = json.decode(response.body);
-      print(_userDetailsMapToJson(userDetailsMap));
-      if (data['error'] == null) {
-        http.Response response =
-            await http.post('http://35.238.212.200:8080/addUser',
-                headers: <String, String>{
-                  'Content-Type': 'application/json; charset=UTF-8',
-                },
-                body: jsonEncode(<String, String>{
-                  'bloodgroup': userDetailsMap['bloodgroup'],
-                  'city': userDetailsMap['city'],
-                  'country': userDetailsMap['country'],
-                  'district': userDetailsMap['district'],
-                  'mail_notification': userDetailsMap['mail_notification'],
-                  'mailid': userDetailsMap['mailid'],
-                  'password': userDetailsMap['password'],
-                  'phonenumber': userDetailsMap['phonenumber'],
-                  'pincode': userDetailsMap['pincode'],
-                  'sms_notification': userDetailsMap['sms_notification'],
-                  'state': userDetailsMap['state'],
-                  'town': userDetailsMap['town'],
-                  'username': userDetailsMap['username'],
-                  'fcmtoken': userDetailsMap['fcmtoken']
-                }));
-
-        print("Add User Response " + response.body);
-        Map<String, dynamic> addedData = json.decode(response.body);
-        if (addedData['status'] ==
-            'Added User Succesfully. Please sign in to continue') {
-          print('Hello World');
-          Navigator.push(
-            context,
-            MaterialPageRoute(builder: (context) => OnRegistrationSuccess()),
-          );
-        } else {
-          print('Failed to add User');
-        }
-      } else {
-        setState(() {
-          print(wrongOtp);
-          wrongOtp = true;
-          print(wrongOtp);
-        });
-        wrongOtpEnteredAlert();
-        print("Wrong OTP Entered");
-      }
-    }
+    Map userDetailsMap = jsonDecode(userDetails);
 
     Alert(
         context: context,
@@ -178,7 +118,7 @@ class _RegisterPageState extends State<RegisterPage> {
             ),
             Container(
               child: Text(
-                  "OTP has been sent to the registered mailid. Please verify to continue",
+                  "OTP has been sent to the registered mailid and registered Phone Number. Please verify to continue",
                   textAlign: TextAlign.center,
                   style: TextStyle(
 //                  fontSize: 10.0,
@@ -188,6 +128,20 @@ class _RegisterPageState extends State<RegisterPage> {
           ],
         ),
         buttons: []).show();
+  }
+
+  Widget _enterOtpText(bool wrongOtp) {
+    if (wrongOtp) {
+      print("Please check OTP again 90");
+      return Text('Please check OTP again');
+    } else {
+      print("94");
+      return Text('Please Enter OTP');
+    }
+  }
+
+  Widget _wrongOtpEnteredMessage() {
+    return Text('Please check OTP again');
   }
 
   Widget wrongOtpEnteredAlert() {
@@ -210,7 +164,7 @@ class _RegisterPageState extends State<RegisterPage> {
   }
 
   _firebaseRegister() {
-//    _firebaseMessaging.deleteInstanceID();
+    _firebaseMessaging.deleteInstanceID();
     _firebaseMessaging.getToken().then((token) => fcmtoken = token);
   }
 
@@ -286,204 +240,6 @@ class _RegisterPageState extends State<RegisterPage> {
         ));
   }
 
-  Widget _getCountryField(){
-    return Container(
-      width: double.infinity,
-      padding: EdgeInsets.symmetric(horizontal: 10.0),
-      decoration: BoxDecoration(
-        borderRadius: BorderRadius.circular(32.0),
-        border: Border.all(
-            color: Colors.black, style: BorderStyle.solid, width: 0.50),
-      ),
-      child: DropdownButton<String>(
-        isExpanded: true,
-        hint: Text('Country'),
-        value: country,
-        dropdownColor: Colors.red[100],
-        icon: Icon(Icons.keyboard_arrow_down),
-        style: TextStyle(color: Colors.black, fontWeight: FontWeight.normal),
-        underline: SizedBox(),
-        onChanged: (String newValue) async {
-          var response = await http.get(
-              'http://35.238.212.200:8080/getlist/states?country=' + newValue);
-          Map<String, dynamic> data = json.decode(response.body);
-//          print(data['statesList']['states']);
-          setState(() {
-            country = newValue;
-            //Todo make api call
-            var jsonList = data['statesList']['states'];
-            statesList = [];
-            for (String x in jsonList) {
-              statesList.add(x);
-            }
-          });
-        },
-        items: countriesList.map<DropdownMenuItem<String>>((String value) {
-          return DropdownMenuItem<String>(
-            value: value,
-            child: Text(value),
-          );
-        }).toList(),
-      ),
-    );
-  }
-
-  Widget _getStateField(){
-    return Container(
-      width: double.infinity,
-      padding: EdgeInsets.symmetric(horizontal: 10.0),
-      decoration: BoxDecoration(
-        borderRadius: BorderRadius.circular(32.0),
-        border: Border.all(
-            color: Colors.black, style: BorderStyle.solid, width: 0.50),
-      ),
-      child: SearchableDropdown.single(
-        items: statesList.map<DropdownMenuItem<String>>((String value) {
-          return DropdownMenuItem<String>(
-            value: value,
-            child: Text(value),
-          );
-        }).toList(),
-        value: state,
-        hint: Text('State'),
-        searchHint: null,
-        onChanged: (String newValue) async {
-          var response = await http.get(
-              'http://35.238.212.200:8080/getlist/districts?state=' + newValue);
-          Map<String, dynamic> data = json.decode(response.body);
-          setState(() {
-            state = newValue;
-            districtList = [];
-            var jsonList = data['districtsList']['districts'];
-            for (String x in jsonList) {
-              districtList.add(x);
-            }
-          });
-        },
-        dialogBox: false,
-        isExpanded: true,
-        menuConstraints: BoxConstraints.tight(Size.fromHeight(350)),
-      ),
-    );
-  }
-
-  Widget _getDistrictField(){
-    return Container(
-      padding: EdgeInsets.symmetric(horizontal: 10.0),
-      decoration: BoxDecoration(
-        borderRadius: BorderRadius.circular(32.0),
-        border: Border.all(
-            color: Colors.black, style: BorderStyle.solid, width: 0.50),
-      ),
-      width: double.infinity,
-      child: SearchableDropdown.single(
-        items: districtList.map<DropdownMenuItem<String>>((String value) {
-          return DropdownMenuItem<String>(
-            value: value,
-            child: Text(value),
-          );
-        }).toList(),
-        isExpanded: true,
-        value: district,
-        hint: Text('District'),
-        icon: Icon(Icons.keyboard_arrow_down),
-        iconSize: 24,
-        style: TextStyle(color: Colors.black),
-        onChanged: (String newValue) async {
-          var response = await http.get(
-              'http://35.238.212.200:8080/getlist/cities?district=' + newValue);
-          Map<String, dynamic> data = json.decode(response.body);
-          setState(() {
-            district = newValue;
-            var jsonList = data['citiesList']['city'];
-            citiesList = [];
-            for (String x in jsonList) {
-              citiesList.add(x);
-            }
-          });
-        },
-      ),
-    );
-  }
-
-  Widget _getCityField(){
-    return Container(
-      padding: EdgeInsets.symmetric(horizontal: 10.0),
-      decoration: BoxDecoration(
-        borderRadius: BorderRadius.circular(32.0),
-        border: Border.all(
-            color: Colors.black, style: BorderStyle.solid, width: 0.50),
-      ),
-      width: double.infinity,
-      child: SearchableDropdown.single(
-        items: citiesList.map<DropdownMenuItem<String>>((String value) {
-          return DropdownMenuItem<String>(
-            value: value,
-            child: Text(value),
-          );
-        }).toList(),
-        isExpanded: true,
-        value: city,
-        hint: Text('City'),
-        icon: Icon(Icons.keyboard_arrow_down),
-        iconSize: 24,
-        style: TextStyle(color: Colors.black),
-        onChanged: (String newValue) async {
-          var response = await http
-              .get('http://35.238.212.200:8080/getlist/towns?city=' + newValue);
-          Map<String, dynamic> data = json.decode(response.body);
-          setState(() {
-            city = newValue;
-            townsList = [];
-            var jsonList = data['townsList']['town'];
-            for (String x in jsonList) {
-              townsList.add(x);
-            }
-          });
-        },
-      ),
-    );
-  }
-
-  Widget _getTownField(){
-    return Container(
-      width: double.infinity,
-      padding: EdgeInsets.symmetric(horizontal: 10.0),
-      decoration: BoxDecoration(
-        borderRadius: BorderRadius.circular(32.0),
-        border: Border.all(
-            color: Colors.black, style: BorderStyle.solid, width: 0.50),
-      ),
-      child: SearchableDropdown.single(
-        items: townsList.map<DropdownMenuItem<String>>((String value) {
-          return DropdownMenuItem<String>(
-            value: value,
-            child: Text(value),
-          );
-        }).toList(),
-        isExpanded: true,
-        value: town,
-        hint: Text('Town'),
-        icon: Icon(Icons.keyboard_arrow_down),
-        iconSize: 24,
-        style: TextStyle(color: Colors.black),
-        onChanged: (String newValue) async {
-          var response =
-          await http.get('http://35.238.212.200:8080/getlist/bloodgroups');
-          Map<String, dynamic> data = json.decode(response.body);
-          bloodGroupsList = [];
-          setState(() {
-            town = newValue;
-            var jsonList = data['bloodGroupsList']['blood_group'];
-            for (String x in jsonList) {
-              bloodGroupsList.add(x);
-            }
-          });
-        },
-      ),
-    );
-  }
-
   Widget _getBloodGroupField(){
     return Container(
       width: double.infinity,
@@ -516,21 +272,6 @@ class _RegisterPageState extends State<RegisterPage> {
     );
   }
 
-  Widget _getPincodeField(){
-    return Container(
-        width: double.infinity,
-        child: TextField(
-          controller: pincodeFieldController,
-          obscureText: false,
-          style: style,
-          decoration: InputDecoration(
-              contentPadding: EdgeInsets.fromLTRB(20.0, 15.0, 20.0, 15.0),
-              hintText: "Pincode",
-              border: OutlineInputBorder(
-                  borderRadius: BorderRadius.circular(32.0))),
-        ));
-  }
-
   Widget _getRegisterButton(){
     return Material(
       elevation: 5.0,
@@ -542,21 +283,17 @@ class _RegisterPageState extends State<RegisterPage> {
         onPressed: () async {
           _firebaseRegister();
           print("Token of the User is :" + fcmtoken);
-          String userDetailsJson = jsonEncode(<String, String>{
-            'bloodgroup': bloodGroup,
-            'city': city,
-            'country': country,
-            'district': district,
-            'mail_notification': 'true',
-            'mailid': emailFieldController.text,
-            'password': passwordFieldController.text,
-            'phonenumber': mobileNumberFieldController.text,
-            'pincode': pincodeFieldController.text,
-            'sms_notification': 'true',
-            'state': state,
-            'town': town,
-            'username': fullNameFieldController.text,
-            'fcmtoken': fcmtoken
+          setState(() {
+            userDetailsJson = jsonEncode(<String, String>{
+              'bloodgroup': bloodGroup,
+              'mail_notification': 'true',
+              'mailid': emailFieldController.text,
+              'password': passwordFieldController.text,
+              'phonenumber': mobileNumberFieldController.text,
+              'sms_notification': 'true',
+              'username': fullNameFieldController.text,
+              'fcmtoken': fcmtoken
+            });
           });
           print(userDetailsJson);
           http.Response response =
@@ -590,12 +327,12 @@ class _RegisterPageState extends State<RegisterPage> {
   _getOtp(String mailid) async {
     print("Mailid for OTP : " + mailid);
     http.Response response = await http.get(
-        'http://35.238.212.200:8080/getuserotp?mailid=' + mailid,
+        'http://35.238.212.200:8080/getuserotp?mailid='+mailid,
         headers: <String, String>{
           'Content-Type': 'application/json; charset=UTF-8',
         });
+
     Map<String, dynamic> data = json.decode(response.body);
-    print(data);
     print("OTP in data : " + data['otp']);
       setState(() {
         otp = data['otp'];
@@ -655,19 +392,7 @@ class _RegisterPageState extends State<RegisterPage> {
               SizedBox(height: 10.0),
               _getMobileNumberField(),
               SizedBox(height: 10.0),
-              _getCountryField(),
-              SizedBox(height: 10.0),
-              _getStateField(),
-              SizedBox(height: 10.0),
-              _getDistrictField(),
-              SizedBox(height: 10.0),
-              _getCityField(),
-              SizedBox(height: 10.0),
-              _getTownField(),
-              SizedBox(height: 10.0),
               _getBloodGroupField(),
-              SizedBox(height: 10.0),
-              _getPincodeField(),
               SizedBox(height: 10.0),
               _getRegisterButton(),
             ],
