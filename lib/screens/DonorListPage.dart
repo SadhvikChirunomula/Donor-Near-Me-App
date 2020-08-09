@@ -27,7 +27,7 @@ class _DonorListPageState extends State<DonorListPage> {
   String mailid;
   bool toggle = true;
   bool messageSubmitStatus = false;
-  List<int> iList = [0, 0, 0, 0, 0, 0];
+  List<int> iList = [];
 
   @override
   void initState() {
@@ -36,6 +36,9 @@ class _DonorListPageState extends State<DonorListPage> {
       onSlideAnimationChanged: handleSlideAnimationChanged,
       onSlideIsOpenChanged: handleSlideIsOpenChanged,
     );
+    for (int i = 0; i < donorList.length; i++) {
+      iList.add(0);
+    }
     super.initState();
   }
 
@@ -119,6 +122,43 @@ class _DonorListPageState extends State<DonorListPage> {
     );
   }
 
+  Widget _getHelloUserText(String mailid) {
+    return Container(
+        decoration: BoxDecoration(
+            gradient: LinearGradient(colors: [
+              Colors.red,
+              Colors.orange,
+            ])),
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: <Widget>[
+            Row(),
+            Padding(
+              padding:
+              const EdgeInsets.symmetric(horizontal: 42.0, vertical: 32.0),
+              child: Container(
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: <Widget>[
+                    Padding(
+                      padding: const EdgeInsets.fromLTRB(0.0, 16.0, 0.0, 12.0),
+                      child: Text(
+                        "Hello, " + mailid,
+                        style: TextStyle(fontSize: 30.0, color: Colors.white),
+                      ),
+                    ),
+                    Text(
+                      "Here, You can Notify Donors",
+                      style: TextStyle(color: Colors.white),
+                    ),
+                  ],
+                ),
+              ),
+            ),
+          ],
+        ));
+  }
+
   Animation<double> _rotationAnimation;
   Color _fabColor = Colors.blue;
 
@@ -182,7 +222,8 @@ class _DonorListPageState extends State<DonorListPage> {
       context: context,
       type: AlertType.success,
       title: "Message Submitted",
-      desc: "Message Submitted Succesfully. When you click on notify now..the respective donor will be recieving a mail and a mobile notification with your message as subject",
+      desc:
+          "Message Submitted Succesfully. When you click on notify now..the respective donor will be recieving a mail and a mobile notification with your message as subject",
       buttons: [
         DialogButton(
           child: Text(
@@ -207,6 +248,7 @@ class _DonorListPageState extends State<DonorListPage> {
         children: <Widget>[
           Container(
               child: ListView(shrinkWrap: true, children: <Widget>[
+                _getHelloUserText(mailid),
             SizedBox(child: _messageBox()),
             SizedBox(width: 10, child: _submitMessageButton()),
             SizedBox(height: 10),

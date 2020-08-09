@@ -1,11 +1,10 @@
+import 'package:dnmui/screens/WelcomeSplashScreen.dart';
 import 'package:flutter/material.dart';
-
-import 'screens/AskForLoginOrSignUp.dart';
 
 void main() {
   runApp(MaterialApp(
     title: 'Donor Near Me App',
-    home: AskForLoginOrSignUp(),
+    home: WelcomeSplashScreen(),
     debugShowCheckedModeBanner: false,
   ));
 }

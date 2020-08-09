@@ -1,10 +1,13 @@
 import 'dart:convert';
 
+import 'package:contactus/contactus.dart';
 import 'package:dnmui/screens/DonorRequestPage.dart';
+import 'package:dnmui/screens/RegisterPage.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_share/flutter_share.dart';
 import 'package:http/http.dart' as http;
 
-import 'AskForLoginOrSignUp.dart';
+import 'OnLoginPage.dart';
 
 class LoginPage extends StatefulWidget {
   LoginPage({Key key, this.title}) : super(key: key);
@@ -20,6 +23,27 @@ class _LoginPageState extends State<LoginPage> {
   TextEditingController emailFieldController = new TextEditingController();
   TextEditingController passwordFieldController = new TextEditingController();
   String error = '';
+  bool _passwordVisible = false;
+
+  Widget _appOwnerDetails() {
+    return MaterialApp(
+      debugShowCheckedModeBanner: false,
+      home: Scaffold(
+        backgroundColor: Colors.teal,
+        body: ContactUs(
+            logo: AssetImage('images/crop.jpg'),
+            email: 'adoshi26.ad@gmail.com',
+            companyName: 'Abhishek Doshi',
+            phoneNumber: '+91123456789',
+            website: 'https://abhishekdoshi.godaddysites.com',
+            githubUserName: 'AbhishekDoshi26',
+            linkedinURL:
+                'https://www.linkedin.com/in/abhishek-doshi-520983199/',
+            tagLine: 'Flutter Developer',
+            twitterHandle: 'AbhishekDoshi26'),
+      ),
+    );
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -34,15 +58,26 @@ class _LoginPageState extends State<LoginPage> {
       ),
     );
     final passwordField = TextField(
-      obscureText: true,
-      controller: passwordFieldController,
-      style: style,
-      decoration: InputDecoration(
-          contentPadding: EdgeInsets.fromLTRB(20.0, 15.0, 20.0, 15.0),
-          hintText: "Password",
-          border:
-              OutlineInputBorder(borderRadius: BorderRadius.circular(32.0))),
-    );
+        obscureText: !_passwordVisible,
+        //This will obscure text dynamically
+        controller: passwordFieldController,
+        style: style,
+        decoration: InputDecoration(
+            contentPadding: EdgeInsets.fromLTRB(20.0, 15.0, 20.0, 15.0),
+            hintText: "Password",
+            border:
+                OutlineInputBorder(borderRadius: BorderRadius.circular(32.0)),
+            suffixIcon: IconButton(
+              icon: Icon(
+                _passwordVisible ? Icons.visibility : Icons.visibility_off,
+                color: Theme.of(context).primaryColorDark,
+              ),
+              onPressed: () {
+                setState(() {
+                  _passwordVisible = !_passwordVisible;
+                });
+              },
+            )));
 
     final loginButon = Material(
       elevation: 5.0,
@@ -66,11 +101,12 @@ class _LoginPageState extends State<LoginPage> {
             setState(() {
               error = '';
             });
+            print("User mailid : "+emailFieldController.text);
             Navigator.push(
               context,
               MaterialPageRoute(
                   builder: (context) =>
-                      DonorRequestPage(mailid: emailFieldController.text)),
+                      OnLoginPage(mailid: emailFieldController.text)),
             );
           } else {
             setState(() {
@@ -86,21 +122,58 @@ class _LoginPageState extends State<LoginPage> {
       ),
     );
 
+    Widget _createAccountLabel() {
+      return InkWell(
+        onTap: () {
+          Navigator.push(
+              context, MaterialPageRoute(builder: (context) => RegisterPage()));
+        },
+        child: Container(
+          margin: EdgeInsets.symmetric(vertical: 20),
+          padding: EdgeInsets.all(15),
+          alignment: Alignment.bottomCenter,
+          child: Row(
+            mainAxisAlignment: MainAxisAlignment.center,
+            children: <Widget>[
+              Text(
+                'Don\'t have an account ?',
+                style: TextStyle(fontSize: 17, fontWeight: FontWeight.w600),
+              ),
+              SizedBox(
+                width: 10,
+              ),
+              Text(
+                'Register Here',
+                style: TextStyle(
+                    color: Color(0xfff79c4f),
+                    fontSize: 17,
+                    fontWeight: FontWeight.w600),
+              ),
+            ],
+          ),
+        ),
+      );
+    }
+
+    Future<void> share() async {
+      await FlutterShare.share(
+          title: 'Donor Near Me',
+          text: 'Click on the URL below to download the App',
+          linkUrl: 'http://donornearme.com/',
+          chooserTitle: 'Find a blood donor near you!');
+    }
+
     return Scaffold(
       appBar: AppBar(
-          title: Text('Login'),
+          title: Text('Welcome to Donor Near Me'),
           backgroundColor: Colors.redAccent,
           brightness: Brightness.dark,
           centerTitle: true,
           actions: [
             IconButton(
-              icon: Icon(Icons.home),
+              icon: Icon(Icons.share),
               onPressed: () {
-                Navigator.push(
-                  context,
-                  MaterialPageRoute(
-                      builder: (context) => AskForLoginOrSignUp()),
-                );
+                share();
               },
             )
           ]),
@@ -108,6 +181,7 @@ class _LoginPageState extends State<LoginPage> {
         height: double.infinity,
         width: double.infinity,
         decoration: BoxDecoration(
+//          color: Colors.greenAccent
             gradient: LinearGradient(colors: [
           Colors.red[100],
           Colors.white,
@@ -143,12 +217,16 @@ class _LoginPageState extends State<LoginPage> {
                     fontWeight: FontWeight.bold),
               )),
               SizedBox(
-                height: 35.0,
+                height: 10.0,
               ),
               loginButon,
               SizedBox(
                 height: 15.0,
               ),
+              _createAccountLabel(),
+              SizedBox(
+                height: 20,
+              )
             ],
           ),
         )),

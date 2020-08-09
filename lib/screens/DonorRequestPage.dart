@@ -1,6 +1,5 @@
 import 'dart:convert';
 
-import 'package:dnmui/screens/UserNotfiyPage.dart';
 import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
 import 'package:searchable_dropdown/searchable_dropdown.dart';
@@ -20,13 +19,16 @@ class DonorRequestPage extends StatefulWidget {
 
 class _DonorRequestPageState extends State<DonorRequestPage> {
   String mailid;
-  String country;
-  String state;
-  String district;
-  String city;
-  String town;
-  String bloodGroup;
-  List<String> countriesList = [];
+
+  _DonorRequestPageState(this.mailid);
+
+  String country = '';
+  String state = '';
+  String district = '';
+  String city = '';
+  String town = '';
+  String bloodGroup = '';
+  List<String> countriesList = ['India'];
   List<String> statesList = [];
   List<String> districtList = [];
   List<String> citiesList = [];
@@ -34,46 +36,30 @@ class _DonorRequestPageState extends State<DonorRequestPage> {
   List<String> bloodGroupsList = [];
   List<Map> donorList = [];
 
-  _DonorRequestPageState(this.mailid);
-  TextEditingController messageFieldController = new TextEditingController();
-
-  Widget _messageBox(){
+  Widget _getCountryField() {
     return Container(
-        width: double.infinity,
-        child: TextField(
-          controller: messageFieldController,
-          obscureText: false,
-          decoration: InputDecoration(
-              contentPadding: EdgeInsets.fromLTRB(20.0, 15.0, 20.0, 15.0),
-              hintText: "Message",
-              border: OutlineInputBorder(
-                  borderRadius: BorderRadius.circular(32.0))),
-        ));
-  }
-
-  @override
-  Widget build(BuildContext context) {
-    final countryField = Container(
-      width: double.infinity,
       padding: EdgeInsets.symmetric(horizontal: 10.0),
       decoration: BoxDecoration(
         borderRadius: BorderRadius.circular(32.0),
         border: Border.all(
             color: Colors.black, style: BorderStyle.solid, width: 0.50),
       ),
-      child: DropdownButton<String>(
+      child: SearchableDropdown.single(
         isExpanded: true,
         hint: Text('Country'),
+        searchHint: "Please Select Your Country",
         value: country,
-        dropdownColor: Colors.red[100],
+        iconEnabledColor : Colors.blue,
+        iconDisabledColor: Colors.black,
+        dialogBox: true,
         icon: Icon(Icons.keyboard_arrow_down),
-        style: TextStyle(color: Colors.black, fontWeight: FontWeight.normal),
-        underline: SizedBox(),
+        iconSize: 24,
+        displayClearIcon: false,
+        style: TextStyle(color: Colors.black),
         onChanged: (String newValue) async {
           var response = await http.get(
               'http://35.238.212.200:8080/getlist/states?country=' + newValue);
           Map<String, dynamic> data = json.decode(response.body);
-//          print(data['statesList']['states']);
           setState(() {
             country = newValue;
             //Todo make api call
@@ -84,7 +70,7 @@ class _DonorRequestPageState extends State<DonorRequestPage> {
             }
           });
         },
-        items: <String>['India'].map<DropdownMenuItem<String>>((String value) {
+        items: countriesList.map<DropdownMenuItem<String>>((String value) {
           return DropdownMenuItem<String>(
             value: value,
             child: Text(value),
@@ -92,8 +78,11 @@ class _DonorRequestPageState extends State<DonorRequestPage> {
         }).toList(),
       ),
     );
-    var stateField = Container(
-      width: double.infinity,
+  }
+
+  Widget _getStateField(List<String> statesList) {
+    return Container(
+//      width: double.infinity,
       padding: EdgeInsets.symmetric(horizontal: 10.0),
       decoration: BoxDecoration(
         borderRadius: BorderRadius.circular(32.0),
@@ -104,8 +93,13 @@ class _DonorRequestPageState extends State<DonorRequestPage> {
         isExpanded: true,
         value: state,
         hint: Text('State'),
+        searchHint: "Please Select Your State",
+//        disabledHint: "Please select Country First",
         icon: Icon(Icons.keyboard_arrow_down),
+        iconEnabledColor : Colors.blue,
+        iconDisabledColor: Colors.black,
         iconSize: 24,
+        displayClearIcon: false,
         style: TextStyle(color: Colors.black),
         onChanged: (String newValue) async {
           var response = await http.get(
@@ -128,19 +122,27 @@ class _DonorRequestPageState extends State<DonorRequestPage> {
         }).toList(),
       ),
     );
-    final districtField = Container(
+  }
+
+  Widget _getDistrictField(List<String> districtsList) {
+    return Container(
       padding: EdgeInsets.symmetric(horizontal: 10.0),
       decoration: BoxDecoration(
         borderRadius: BorderRadius.circular(32.0),
         border: Border.all(
             color: Colors.black, style: BorderStyle.solid, width: 0.50),
       ),
-      width: double.infinity,
+//      width: double.infinity,
       child: SearchableDropdown.single(
         isExpanded: true,
         value: district,
         hint: Text('District'),
+        searchHint: "Please Select Your District",
+//        disabledHint: "Please select State First",
         icon: Icon(Icons.keyboard_arrow_down),
+        iconEnabledColor : Colors.blue,
+        displayClearIcon: false,
+        iconDisabledColor: Colors.black,
         iconSize: 24,
         style: TextStyle(color: Colors.black),
         onChanged: (String newValue) async {
@@ -150,10 +152,11 @@ class _DonorRequestPageState extends State<DonorRequestPage> {
           setState(() {
             district = newValue;
             var jsonList = data['citiesList']['city'];
-            citiesList = [];
+            List<String> citiesListtemp = [];
             for (String x in jsonList) {
-              citiesList.add(x);
+              citiesListtemp.add(x);
             }
+            citiesList = citiesListtemp;
           });
         },
         items: districtList.map<DropdownMenuItem<String>>((String value) {
@@ -164,19 +167,27 @@ class _DonorRequestPageState extends State<DonorRequestPage> {
         }).toList(),
       ),
     );
-    final cityField = Container(
+  }
+
+  Widget _getCityField(List<String> citiesList) {
+    return Container(
       padding: EdgeInsets.symmetric(horizontal: 10.0),
       decoration: BoxDecoration(
         borderRadius: BorderRadius.circular(32.0),
         border: Border.all(
             color: Colors.black, style: BorderStyle.solid, width: 0.50),
       ),
-      width: double.infinity,
+//      width: double.infinity,
       child: SearchableDropdown.single(
         isExpanded: true,
         value: city,
         hint: Text('City'),
+        searchHint: "Please Select Your City",
+//        disabledHint: "Please select District First",
         icon: Icon(Icons.keyboard_arrow_down),
+        iconEnabledColor : Colors.blue,
+        iconDisabledColor: Colors.black,
+        displayClearIcon: false,
         iconSize: 24,
         style: TextStyle(color: Colors.black),
         onChanged: (String newValue) async {
@@ -200,8 +211,11 @@ class _DonorRequestPageState extends State<DonorRequestPage> {
         }).toList(),
       ),
     );
-    final townField = Container(
-      width: double.infinity,
+  }
+
+  Widget _getTownField(List<String> townsList) {
+    return Container(
+//      width: double.infinity,
       padding: EdgeInsets.symmetric(horizontal: 10.0),
       decoration: BoxDecoration(
         borderRadius: BorderRadius.circular(32.0),
@@ -212,8 +226,13 @@ class _DonorRequestPageState extends State<DonorRequestPage> {
         isExpanded: true,
         value: town,
         hint: Text('Town'),
+        searchHint: "Please Select Your Town",
+//        disabledHint: "Please select City First",
         icon: Icon(Icons.keyboard_arrow_down),
         iconSize: 24,
+        iconEnabledColor : Colors.blue,
+        iconDisabledColor: Colors.black,
+        displayClearIcon: false,
         style: TextStyle(color: Colors.black),
         onChanged: (String newValue) async {
           var response =
@@ -236,8 +255,11 @@ class _DonorRequestPageState extends State<DonorRequestPage> {
         }).toList(),
       ),
     );
-    final bloodGroupField = Container(
-      width: double.infinity,
+  }
+
+  Widget _getBloodGroupField(List<String> bloodGroupsList) {
+    return Container(
+//      width: double.infinity,
       padding: EdgeInsets.symmetric(horizontal: 10.0),
       decoration: BoxDecoration(
         borderRadius: BorderRadius.circular(32.0),
@@ -250,6 +272,9 @@ class _DonorRequestPageState extends State<DonorRequestPage> {
         hint: Text('Blood Group'),
         icon: Icon(Icons.keyboard_arrow_down),
         iconSize: 24,
+        iconEnabledColor : Colors.blue,
+        iconDisabledColor: Colors.black,
+        displayClearIcon: false,
         style: TextStyle(color: Colors.black),
         onChanged: (String newValue) {
           bloodGroup = '';
@@ -266,13 +291,16 @@ class _DonorRequestPageState extends State<DonorRequestPage> {
         }).toList(),
       ),
     );
-    final searchButon = Material(
+  }
+
+  Widget _getSearchButton() {
+    return Material(
       elevation: 5.0,
       borderRadius: BorderRadius.circular(30.0),
-      color: Color(0xff01A0C7),
+      color: Colors.blue,
       child: MaterialButton(
         minWidth: MediaQuery.of(context).size.width,
-        padding: EdgeInsets.fromLTRB(20.0, 15.0, 20.0, 15.0),
+//        padding: EdgeInsets.fromLTRB(20.0, 15.0, 20.0, 15.0),
         onPressed: () async {
           print('http://35.238.212.200:8080/getdonors/available?country=' +
               country +
@@ -318,7 +346,8 @@ class _DonorRequestPageState extends State<DonorRequestPage> {
             Navigator.push(
               context,
               MaterialPageRoute(
-                  builder: (context) => DonorListPage(donorList: donorList, mailid: mailid)),
+                  builder: (context) =>
+                      DonorListPage(donorList: donorList, mailid: mailid)),
             );
           }
         },
@@ -328,36 +357,47 @@ class _DonorRequestPageState extends State<DonorRequestPage> {
         ),
       ),
     );
-    final notificationsButon = Material(
-      elevation: 5.0,
-      borderRadius: BorderRadius.circular(30.0),
-      color: Color(0xff01A0C7),
-      child: MaterialButton(
-        minWidth: MediaQuery.of(context).size.width,
-        padding: EdgeInsets.fromLTRB(20.0, 15.0, 20.0, 15.0),
-        onPressed: () async {
-          String baseUrl =
-              "http://35.238.212.200:8080/getbloodrequests?mailid=" + mailid;
-          final response = await http.get(baseUrl);
-          Map<String, dynamic> data = json.decode(response.body);
-          var jsonList = data['requestsList'];
-          List<Map> bloodRequestsList = [];
-          for (Map x in jsonList) {
-            print(bloodRequestsList);
-            bloodRequestsList.add(x);
-          }
-          Navigator.push(
-            context,
-            MaterialPageRoute(
-                builder: (context) => UserNotifyPage(mailid: mailid, bloodRequestsList: bloodRequestsList)),
-          );
-        },
-        child: Text(
-          "Blood Requests",
-          textAlign: TextAlign.center,
-        ),
-      ),
-    );
+  }
+
+  Widget _getHelloUserText(String mailid) {
+    return Container(
+        decoration: BoxDecoration(
+            gradient: LinearGradient(colors: [
+          Colors.red,
+          Colors.orange,
+        ])),
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: <Widget>[
+            Row(),
+            Padding(
+              padding:
+                  const EdgeInsets.symmetric(horizontal: 42.0, vertical: 32.0),
+              child: Container(
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: <Widget>[
+                    Padding(
+                      padding: const EdgeInsets.fromLTRB(0.0, 16.0, 0.0, 12.0),
+                      child: Text(
+                        "Hello, " + mailid,
+                        style: TextStyle(fontSize: 30.0, color: Colors.white),
+                      ),
+                    ),
+                    Text(
+                      "Please provide location where you require blood. Please first select Country..then State..District..City..Town. \n Based on the provided location we will give you the details of the donors nearby",
+                      style: TextStyle(color: Colors.white),
+                    ),
+                  ],
+                ),
+              ),
+            ),
+          ],
+        ));
+  }
+
+  @override
+  Widget build(BuildContext context) {
     return Scaffold(
         appBar: AppBar(
           actions: [
@@ -378,37 +418,53 @@ class _DonorRequestPageState extends State<DonorRequestPage> {
 //        leading: Icon(Icons.menu),
         ),
         body: Container(
-            width: double.infinity,
             decoration: BoxDecoration(
                 gradient: LinearGradient(colors: [
               Colors.red[100],
-              Colors.red[50],
+              Colors.orange[200],
             ])),
-            child: Center(
-                child: Padding(
-              padding: const EdgeInsets.all(36.0),
+            child: Container(
               child: ListView(
                 shrinkWrap: true,
                 children: <Widget>[
-                  Text("Hello User " + mailid,style: TextStyle(fontSize: 18)),
+                  _getHelloUserText(mailid),
+                  SizedBox(height: 20.0),
+                  Container(
+                      padding: EdgeInsets.fromLTRB(50, 0, 50, 0),
+                      child: _getCountryField()),
                   SizedBox(height: 10.0),
-                  notificationsButon,
+                  Container(
+                    padding: EdgeInsets.fromLTRB(50, 0, 50, 0),
+                    child: _getStateField(statesList),
+                  ),
                   SizedBox(height: 10.0),
-                  countryField,
+                  Container(
+                    padding: EdgeInsets.fromLTRB(50, 0, 50, 0),
+                    child: _getDistrictField(districtList),
+                  ),
                   SizedBox(height: 10.0),
-                  stateField,
+                  Container(
+                    padding: EdgeInsets.fromLTRB(50, 0, 50, 0),
+                    child: _getCityField(citiesList),
+                  ),
                   SizedBox(height: 10.0),
-                  districtField,
+                  Container(
+                    padding: EdgeInsets.fromLTRB(50, 0, 50, 0),
+                    child: _getTownField(townsList),
+                  ),
                   SizedBox(height: 10.0),
-                  cityField,
+                  Container(
+                    padding: EdgeInsets.fromLTRB(50, 0, 50, 0),
+                    child: _getBloodGroupField(bloodGroupsList),
+                  ),
                   SizedBox(height: 10.0),
-                  townField,
-                  SizedBox(height: 10.0),
-                  bloodGroupField,
-                  SizedBox(height: 10.0),
-                  searchButon,
+                  Container(
+                    padding: EdgeInsets.fromLTRB(50, 0, 50, 0),
+                    child: _getSearchButton(),
+                  ),
+                  SizedBox(height: 100.0),
                 ],
               ),
-            ))));
+            )));
   }
 }

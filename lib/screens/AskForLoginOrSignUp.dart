@@ -34,7 +34,6 @@ class _AskForLoginOrSignUp extends State<AskForLoginOrSignUp> {
 }
 
 class AfterSplash extends StatelessWidget {
-
   @override
   Widget build(BuildContext context) {
     final loginButon = Material(
@@ -97,8 +96,7 @@ class AfterSplash extends StatelessWidget {
           title: 'Donor Near Me',
           text: 'Click on the URL below to download the App',
           linkUrl: 'http://donornearme.com/',
-          chooserTitle: 'Find a blood donor near you!'
-      );
+          chooserTitle: 'Find a blood donor near you!');
     }
 
     return Scaffold(
@@ -135,13 +133,17 @@ class AfterSplash extends StatelessWidget {
                 SizedBox(
                   child: Image.asset(
                     "assets/logo.png",
-                    fit: BoxFit.contain,
+                    height: 370,
+                    width: 370,
+//                    fit: BoxFit.fill,
                   ),
                 ),
                 SizedBox(
                   height: 20.0,
                 ),
+                Text('Already a user, then please log in to Continue'),
                 loginButon,
+                Text('New User? Please Register to continue'),
                 SizedBox(
                   height: 20.0,
                 ),
