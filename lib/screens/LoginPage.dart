@@ -1,7 +1,6 @@
 import 'dart:convert';
 
 import 'package:contactus/contactus.dart';
-import 'package:dnmui/screens/DonorRequestPage.dart';
 import 'package:dnmui/screens/RegisterPage.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_share/flutter_share.dart';
@@ -45,9 +44,8 @@ class _LoginPageState extends State<LoginPage> {
     );
   }
 
-  @override
-  Widget build(BuildContext context) {
-    final emailField = TextField(
+  Widget _getEmailField() {
+    return TextField(
       obscureText: false,
       controller: emailFieldController,
       style: style,
@@ -57,7 +55,10 @@ class _LoginPageState extends State<LoginPage> {
         border: OutlineInputBorder(borderRadius: BorderRadius.circular(32.0)),
       ),
     );
-    final passwordField = TextField(
+  }
+
+  Widget _getPasswordField() {
+    return TextField(
         obscureText: !_passwordVisible,
         //This will obscure text dynamically
         controller: passwordFieldController,
@@ -78,8 +79,10 @@ class _LoginPageState extends State<LoginPage> {
                 });
               },
             )));
+  }
 
-    final loginButon = Material(
+  Widget _getLoginButton() {
+    return Material(
       elevation: 5.0,
       borderRadius: BorderRadius.circular(30.0),
       color: Color(0xff01A0C7),
@@ -101,7 +104,7 @@ class _LoginPageState extends State<LoginPage> {
             setState(() {
               error = '';
             });
-            print("User mailid : "+emailFieldController.text);
+            print("User mailid : " + emailFieldController.text);
             Navigator.push(
               context,
               MaterialPageRoute(
@@ -121,54 +124,57 @@ class _LoginPageState extends State<LoginPage> {
                 color: Colors.white, fontWeight: FontWeight.bold)),
       ),
     );
+  }
 
-    Widget _createAccountLabel() {
-      return InkWell(
-        onTap: () {
-          Navigator.push(
-              context, MaterialPageRoute(builder: (context) => RegisterPage()));
-        },
-        child: Container(
-          margin: EdgeInsets.symmetric(vertical: 20),
-          padding: EdgeInsets.all(15),
-          alignment: Alignment.bottomCenter,
-          child: Row(
-            mainAxisAlignment: MainAxisAlignment.center,
-            children: <Widget>[
-              Text(
-                'Don\'t have an account ?',
-                style: TextStyle(fontSize: 17, fontWeight: FontWeight.w600),
-              ),
-              SizedBox(
-                width: 10,
-              ),
-              Text(
-                'Register Here',
-                style: TextStyle(
-                    color: Color(0xfff79c4f),
-                    fontSize: 17,
-                    fontWeight: FontWeight.w600),
-              ),
-            ],
-          ),
+  @override
+  Widget _createAccountLabel() {
+    return InkWell(
+      onTap: () {
+        Navigator.push(
+            context, MaterialPageRoute(builder: (context) => RegisterPage()));
+      },
+      child: Container(
+        margin: EdgeInsets.symmetric(vertical: 20),
+        padding: EdgeInsets.all(15),
+        alignment: Alignment.bottomCenter,
+        child: Row(
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: <Widget>[
+            Text(
+              'Don\'t have an account ?',
+              style: TextStyle(fontSize: 20, fontWeight: FontWeight.w600),
+            ),
+            SizedBox(
+              width: 10,
+            ),
+            Text(
+              'Register Here',
+              style: TextStyle(
+                  color: Colors.red, fontSize: 20, fontWeight: FontWeight.w600),
+            ),
+          ],
         ),
-      );
-    }
+      ),
+    );
+  }
 
-    Future<void> share() async {
-      await FlutterShare.share(
-          title: 'Donor Near Me',
-          text: 'Click on the URL below to download the App',
-          linkUrl: 'http://donornearme.com/',
-          chooserTitle: 'Find a blood donor near you!');
-    }
+  Future<void> share() async {
+    await FlutterShare.share(
+        title: 'Donor Near Me',
+        text: 'Click on the URL below to download the App',
+        linkUrl: 'http://donornearme.com/',
+        chooserTitle: 'Find a blood donor near you!');
+  }
 
+  @override
+  Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
           title: Text('Welcome to Donor Near Me'),
           backgroundColor: Colors.redAccent,
           brightness: Brightness.dark,
           centerTitle: true,
+          automaticallyImplyLeading: false,
           actions: [
             IconButton(
               icon: Icon(Icons.share),
@@ -182,11 +188,12 @@ class _LoginPageState extends State<LoginPage> {
         width: double.infinity,
         decoration: BoxDecoration(
 //          color: Colors.greenAccent
-            gradient: LinearGradient(colors: [
-          Colors.red[100],
-          Colors.white,
-          Colors.red[50],
-        ])),
+//            gradient: LinearGradient(colors: [
+//          Colors.red[200],
+//          Colors.red[50],
+//          Colors.red[200],
+//        ])
+        ),
         child: Center(
             child: Padding(
           padding: const EdgeInsets.all(36.0),
@@ -203,9 +210,9 @@ class _LoginPageState extends State<LoginPage> {
                 height: 20.0,
               ),
               SizedBox(height: 10.0),
-              emailField,
+              _getEmailField(),
               SizedBox(height: 25.0),
-              passwordField,
+              _getPasswordField(),
               SizedBox(
                   child: Text(
                 error,
@@ -219,7 +226,7 @@ class _LoginPageState extends State<LoginPage> {
               SizedBox(
                 height: 10.0,
               ),
-              loginButon,
+              _getLoginButton(),
               SizedBox(
                 height: 15.0,
               ),

@@ -1,7 +1,9 @@
 import 'dart:convert';
 
+import 'package:badges/badges.dart';
 import 'package:dnmui/screens/ContactUsPage.dart';
 import 'package:dnmui/screens/DonorRequestPage.dart';
+import 'package:dnmui/screens/LoginPage.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
@@ -37,6 +39,19 @@ class _OnLoginPageState extends State<OnLoginPage> {
       bloodRequestsList.add(x);
     }
     return bloodRequestsList;
+  }
+
+  Widget _notificationBadge() {
+    return Badge(
+      position: BadgePosition.topRight(top: 0, right: 3),
+      animationDuration: Duration(milliseconds: 300),
+      animationType: BadgeAnimationType.slide,
+      badgeContent: Text(
+        '10',
+        style: TextStyle(color: Colors.white),
+      ),
+      child: _getBloodRequestsButton(mailid),
+    );
   }
 
   Widget _getRequestBloodButton(String mailid) {
@@ -183,24 +198,45 @@ class _OnLoginPageState extends State<OnLoginPage> {
   Widget build(BuildContext context) {
     return Scaffold(
         appBar: AppBar(
-          actions: [
-            IconButton(
-              icon: Icon(Icons.settings),
-              onPressed: () {
-                Navigator.push(
-                  context,
-                  MaterialPageRoute(builder: (context) => SettingsPage()),
-                );
-              },
+          actions: <Widget>[
+            GestureDetector(
+                onTap: () {
+                  Navigator.push(
+                    context,
+                    MaterialPageRoute(
+                        builder: (context) => SettingsPage(mailid: mailid)),
+                  );
+                },
+                child: Container(
+                  child: new IconButton(
+                    color: Colors.white,
+                    icon: new Icon(Icons.settings),
+                  ),
+                )),
+            GestureDetector(
+                onTap: () {
+                  print("Logging Out");
+                  Navigator.push(
+                    context,
+                    MaterialPageRoute(builder: (context) => LoginPage()),
+                  );
+                },
+                child: Container(
+                  child: new IconButton(
+                    color: Colors.white,
+                    icon: new Icon(Icons.exit_to_app),
+                  ),
+                )
             )
           ],
           title: Text('Welcome Donor'),
           backgroundColor: Colors.redAccent,
+          automaticallyImplyLeading: false,
           brightness: Brightness.dark,
-          centerTitle: true,
-          leading: Icon(Icons.menu),
+//          centerTitle: true
         ),
         body: Container(
+            height: double.infinity,
             decoration: BoxDecoration(
                 gradient: LinearGradient(colors: [
               Colors.white,
@@ -217,6 +253,8 @@ class _OnLoginPageState extends State<OnLoginPage> {
                   _getBloodRequestsButton(mailid),
                   SizedBox(height: 40.0),
                   _getFactsButton(),
+                  SizedBox(height: 40.0),
+//                  _notificationBadge()
                 ],
               ),
             )),

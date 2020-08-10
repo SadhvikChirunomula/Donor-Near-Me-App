@@ -3,15 +3,14 @@ import 'dart:convert';
 import 'package:dnmui/screens/OnOTPVerificationSuccess.dart';
 import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:flutter/material.dart';
+import 'package:fswitch/fswitch.dart';
 import 'package:http/http.dart' as http;
 import 'package:otp_text_field/otp_field.dart';
 import 'package:otp_text_field/style.dart';
 import 'package:rflutter_alert/rflutter_alert.dart';
-import 'package:searchable_dropdown/searchable_dropdown.dart';
 import 'package:sms/sms.dart';
 
 import 'AskForLoginOrSignUp.dart';
-import 'RegistrationSuccessSplashScreen.dart';
 
 class RegisterPage extends StatefulWidget {
   RegisterPage({Key key, this.title}) : super(key: key);
@@ -33,11 +32,13 @@ class _RegisterPageState extends State<RegisterPage> {
   String bloodGroup;
   List<String> bloodGroupsList = [];
   FirebaseMessaging _firebaseMessaging = FirebaseMessaging();
-  String userDetailsJson= '';
+  String userDetailsJson = '';
   String fcmtoken = '';
   String error = 'Please Enter OTP';
   bool wrongOtp = false;
-
+  bool smsNotification = true;
+  bool mailNotification = true;
+  bool _passwordVisible = false;
 
   @override
   void initState() {
@@ -48,7 +49,7 @@ class _RegisterPageState extends State<RegisterPage> {
 
   _getBloodGroupsList() async {
     var response =
-        await http.get('http://35.238.212.200:8080/getlist/bloodgroups');
+        await http.get('http://35.238.212.200:8080/list/bloodgroups');
     Map<String, dynamic> data = json.decode(response.body);
     bloodGroupsList = [];
     setState(() {
@@ -78,16 +79,16 @@ class _RegisterPageState extends State<RegisterPage> {
         headers: <String, String>{
           'Content-Type': 'application/json; charset=UTF-8',
         },
-        body: jsonEncode(<String, String>{
-          'mailid': userDetailsMap['mailid'],
-          'otp': otp
-        }));
+        body: jsonEncode(
+            <String, String>{'mailid': userDetailsMap['mailid'], 'otp': otp}));
     Map<String, dynamic> data = json.decode(response.body);
     print(_userDetailsMapToJson(userDetailsMap));
     if (data['error'] == null) {
       Navigator.push(
         context,
-        MaterialPageRoute(builder: (context) => OnOTPVerificationSuccessPage(userDetailsJson: userDetailsJson)),
+        MaterialPageRoute(
+            builder: (context) =>
+                OnOTPVerificationSuccessPage(userDetailsJson: userDetailsJson)),
       );
     } else {
       setState(() {
@@ -164,8 +165,47 @@ class _RegisterPageState extends State<RegisterPage> {
   }
 
   _firebaseRegister() {
-    _firebaseMessaging.deleteInstanceID();
-    _firebaseMessaging.getToken().then((token) => fcmtoken = token);
+//    _firebaseMessaging.deleteInstanceID();
+//    _firebaseMessaging.getToken().then((token) => fcmtoken = token);
+  }
+
+  Widget _getHelloUserText() {
+    return Container(
+        decoration: BoxDecoration(
+            gradient: LinearGradient(colors: [
+          Colors.red,
+          Colors.orange,
+        ])),
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: <Widget>[
+            Row(),
+            Padding(
+              padding:
+                  const EdgeInsets.symmetric(horizontal: 42.0, vertical: 32.0),
+              child: Container(
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: <Widget>[
+                    Padding(
+                      padding: const EdgeInsets.fromLTRB(0.0, 16.0, 0.0, 12.0),
+                      child: Text(
+                        "Hello, ",
+                        style: TextStyle(fontSize: 30.0, color: Colors.white),
+                      ),
+                    ),
+                    Text(
+                      "Please enter you Name, Emailid, Phone Number, Blood Group. \n"
+                      "These Details are kept confidential.\n \n"
+                      "Once you enter your details and click on Register, an OTP will be sent the registered Mailid and Phonenumber. Please enter OTP to continue",
+                      style: TextStyle(color: Colors.white, fontSize: 18),
+                    ),
+                  ],
+                ),
+              ),
+            ),
+          ],
+        ));
   }
 
   void _sendOtpMethod(String phoneNumber, String otp) {
@@ -180,7 +220,7 @@ class _RegisterPageState extends State<RegisterPage> {
     receiver.onSmsReceived.listen((SmsMessage msg) => print(msg.body));
   }
 
-  Widget _getFullNameField(){
+  Widget _getFullNameField() {
     return Container(
         width: double.infinity,
         child: TextField(
@@ -195,37 +235,48 @@ class _RegisterPageState extends State<RegisterPage> {
         ));
   }
 
-  Widget _getEmailField(){
+  Widget _getEmailField() {
     return Container(
         width: double.infinity,
         child: TextField(
+          style: TextStyle(fontSize: 20.0, color: Colors.black),
           controller: emailFieldController,
           obscureText: false,
-          style: style,
           decoration: InputDecoration(
               contentPadding: EdgeInsets.fromLTRB(20.0, 15.0, 20.0, 15.0),
-              hintText: "Email",
+              hintText: "Email ID",
               border: OutlineInputBorder(
                   borderRadius: BorderRadius.circular(32.0))),
         ));
   }
 
-  Widget _getPasswordField(){
+  Widget _getPasswordField() {
     return Container(
         width: double.infinity,
         child: TextField(
           controller: passwordFieldController,
-          obscureText: true,
+          obscureText: !_passwordVisible,
           style: style,
           decoration: InputDecoration(
               contentPadding: EdgeInsets.fromLTRB(20.0, 15.0, 20.0, 15.0),
               hintText: "Password",
               border: OutlineInputBorder(
-                  borderRadius: BorderRadius.circular(32.0))),
+                  borderRadius: BorderRadius.circular(32.0)),
+              suffixIcon: IconButton(
+                icon: Icon(
+                  _passwordVisible ? Icons.visibility : Icons.visibility_off,
+                  color: Theme.of(context).primaryColorDark,
+                ),
+                onPressed: () {
+                  setState(() {
+                    _passwordVisible = !_passwordVisible;
+                  });
+                },
+              )),
         ));
   }
 
-  Widget _getMobileNumberField(){
+  Widget _getMobileNumberField() {
     return Container(
         width: double.infinity,
         child: TextField(
@@ -240,7 +291,7 @@ class _RegisterPageState extends State<RegisterPage> {
         ));
   }
 
-  Widget _getBloodGroupField(){
+  Widget _getBloodGroupField() {
     return Container(
       width: double.infinity,
       padding: EdgeInsets.symmetric(horizontal: 10.0),
@@ -252,7 +303,10 @@ class _RegisterPageState extends State<RegisterPage> {
       child: DropdownButton<String>(
         isExpanded: true,
         value: bloodGroup,
-        hint: Text('Blood Group'),
+        hint: Text(
+          'Blood Group',
+          style: TextStyle(fontSize: 20.0, color: Colors.black),
+        ),
         icon: Icon(Icons.keyboard_arrow_down),
         iconSize: 24,
         elevation: 16,
@@ -272,11 +326,45 @@ class _RegisterPageState extends State<RegisterPage> {
     );
   }
 
-  Widget _getRegisterButton(){
+  Widget _getSmsNotificationButton() {
+    return FSwitch(
+      onChanged: (bool value) {
+        smsNotification = value;
+        print(smsNotification);
+      },
+      open: false,
+      enable: true,
+      shadowColor: Colors.black.withOpacity(0.5),
+      color: Colors.red,
+      width: double.infinity,
+      height: 28,
+      shadowBlur: 3.0,
+    );
+  }
+
+  Widget _getMailNotificationButton() {
+    return FSwitch(
+      onChanged: (bool value) {
+        mailNotification = value;
+        print(mailNotification);
+      },
+      open: false,
+      enable: true,
+      shadowColor: Colors.black.withOpacity(0.5),
+      color: Colors.red,
+      width: double.infinity,
+      height: 28,
+      shadowBlur: 3.0,
+    );
+  }
+
+
+
+  Widget _getRegisterButton() {
     return Material(
       elevation: 5.0,
       borderRadius: BorderRadius.circular(30.0),
-      color: Color(0xff01A0C7),
+      color: Colors.deepOrangeAccent,
       child: MaterialButton(
         minWidth: MediaQuery.of(context).size.width,
         padding: EdgeInsets.fromLTRB(20.0, 15.0, 20.0, 15.0),
@@ -286,24 +374,24 @@ class _RegisterPageState extends State<RegisterPage> {
           setState(() {
             userDetailsJson = jsonEncode(<String, String>{
               'bloodgroup': bloodGroup,
-              'mail_notification': 'true',
+              'mail_notification': mailNotification.toString(),
               'mailid': emailFieldController.text,
               'password': passwordFieldController.text,
               'phonenumber': mobileNumberFieldController.text,
-              'sms_notification': 'true',
+              'sms_notification': smsNotification.toString(),
               'username': fullNameFieldController.text,
               'fcmtoken': fcmtoken
             });
           });
           print(userDetailsJson);
           http.Response response =
-          await http.post('http://35.238.212.200:8080/sendotp',
-              headers: <String, String>{
-                'Content-Type': 'application/json; charset=UTF-8',
-              },
-              body: jsonEncode(<String, String>{
-                'mailid': emailFieldController.text,
-              }));
+              await http.post('http://35.238.212.200:8080/sendotp',
+                  headers: <String, String>{
+                    'Content-Type': 'application/json; charset=UTF-8',
+                  },
+                  body: jsonEncode(<String, String>{
+                    'mailid': emailFieldController.text,
+                  }));
           print(response.statusCode);
           if (response.statusCode == 200) {
             _getOtp(emailFieldController.text);
@@ -327,17 +415,17 @@ class _RegisterPageState extends State<RegisterPage> {
   _getOtp(String mailid) async {
     print("Mailid for OTP : " + mailid);
     http.Response response = await http.get(
-        'http://35.238.212.200:8080/getuserotp?mailid='+mailid,
+        'http://35.238.212.200:8080/getuserotp?mailid=' + mailid,
         headers: <String, String>{
           'Content-Type': 'application/json; charset=UTF-8',
         });
 
     Map<String, dynamic> data = json.decode(response.body);
     print("OTP in data : " + data['otp']);
-      setState(() {
-        otp = data['otp'];
-        print("OTP after setting state: " + otp);
-      });
+    setState(() {
+      otp = data['otp'];
+      print("OTP after setting state: " + otp);
+    });
 //    if(data['status']=='Got Otp') {
 //      setState(() {
 //        otp = data[otp];
@@ -350,7 +438,6 @@ class _RegisterPageState extends State<RegisterPage> {
 //    }
     return otp;
   }
-
 
   @override
   Widget build(BuildContext context) {
@@ -374,30 +461,44 @@ class _RegisterPageState extends State<RegisterPage> {
           ]),
       body: Container(
         height: double.infinity,
-        width: double.infinity,
+//        width: double.infinity,
         decoration: BoxDecoration(
-            gradient:
-                LinearGradient(colors: [Colors.red[100], Colors.red[200]])),
-        child: Center(
-            child: Padding(
-          padding: const EdgeInsets.all(36.0),
+//            gradient:
+//                LinearGradient(colors: [Colors.red[100], Colors.red[200]])
+            ),
+        child: Container(
           child: ListView(
             shrinkWrap: true,
             children: <Widget>[
-              _getFullNameField(),
-              SizedBox(height: 10.0),
-              _getEmailField(),
-              SizedBox(height: 10.0),
-              _getPasswordField(),
-              SizedBox(height: 10.0),
-              _getMobileNumberField(),
-              SizedBox(height: 10.0),
-              _getBloodGroupField(),
-              SizedBox(height: 10.0),
-              _getRegisterButton(),
+              _getHelloUserText(),
+              SizedBox(height: 30.0),
+              Container(
+                  padding: EdgeInsets.fromLTRB(50, 0, 50, 0),
+                  child: _getEmailField()),
+              SizedBox(height: 20.0),
+              Container(
+                  padding: EdgeInsets.fromLTRB(50, 0, 50, 0),
+                  child: _getFullNameField()),
+              SizedBox(height: 20.0),
+              Container(
+                  padding: EdgeInsets.fromLTRB(50, 0, 50, 0),
+                  child: _getPasswordField()),
+              SizedBox(height: 20.0),
+              Container(
+                  padding: EdgeInsets.fromLTRB(50, 0, 50, 0),
+                  child: _getMobileNumberField()),
+              SizedBox(height: 20.0),
+              Container(
+                  padding: EdgeInsets.fromLTRB(50, 0, 50, 0),
+                  child: _getBloodGroupField()),
+              SizedBox(height: 20.0),
+              Container(
+                  padding: EdgeInsets.fromLTRB(50, 0, 50, 0),
+                  child: _getRegisterButton()),
+              SizedBox(height: 20.0),
             ],
           ),
-        )),
+        ),
       ),
 //        floatingActionButton: Container(
 //            height: 100.0,

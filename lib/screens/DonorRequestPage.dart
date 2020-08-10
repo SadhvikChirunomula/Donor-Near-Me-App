@@ -58,7 +58,7 @@ class _DonorRequestPageState extends State<DonorRequestPage> {
         style: TextStyle(color: Colors.black),
         onChanged: (String newValue) async {
           var response = await http.get(
-              'http://35.238.212.200:8080/getlist/states?country=' + newValue);
+              'http://35.238.212.200:8080/areas/list/states?country=' + newValue);
           Map<String, dynamic> data = json.decode(response.body);
           setState(() {
             country = newValue;
@@ -103,7 +103,7 @@ class _DonorRequestPageState extends State<DonorRequestPage> {
         style: TextStyle(color: Colors.black),
         onChanged: (String newValue) async {
           var response = await http.get(
-              'http://35.238.212.200:8080/getlist/districts?state=' + newValue);
+              'http://35.238.212.200:8080/areas/list/districts?state=' + newValue);
           Map<String, dynamic> data = json.decode(response.body);
           setState(() {
             state = newValue;
@@ -147,7 +147,7 @@ class _DonorRequestPageState extends State<DonorRequestPage> {
         style: TextStyle(color: Colors.black),
         onChanged: (String newValue) async {
           var response = await http.get(
-              'http://35.238.212.200:8080/getlist/cities?district=' + newValue);
+              'http://35.238.212.200:8080/areas/list/cities?district=' + newValue);
           Map<String, dynamic> data = json.decode(response.body);
           setState(() {
             district = newValue;
@@ -192,7 +192,7 @@ class _DonorRequestPageState extends State<DonorRequestPage> {
         style: TextStyle(color: Colors.black),
         onChanged: (String newValue) async {
           var response = await http
-              .get('http://35.238.212.200:8080/getlist/towns?city=' + newValue);
+              .get('http://35.238.212.200:8080/areas/list/towns?city=' + newValue);
           Map<String, dynamic> data = json.decode(response.body);
           setState(() {
             city = newValue;
@@ -236,7 +236,7 @@ class _DonorRequestPageState extends State<DonorRequestPage> {
         style: TextStyle(color: Colors.black),
         onChanged: (String newValue) async {
           var response =
-              await http.get('http://35.238.212.200:8080/getlist/bloodgroups');
+              await http.get('http://35.238.212.200:8080/list/bloodgroups');
           Map<String, dynamic> data = json.decode(response.body);
           setState(() {
             town = newValue;

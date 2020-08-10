@@ -5,6 +5,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_share/flutter_share.dart';
 import 'package:flutter_slidable/flutter_slidable.dart';
 import 'package:http/http.dart' as http;
+import 'package:rflutter_alert/rflutter_alert.dart';
 
 class UserNotifyPage extends StatefulWidget {
   String mailid;
@@ -57,6 +58,63 @@ class _UserNotifyPageState extends State<UserNotifyPage> {
     );
   }
 
+  Widget _getMessageButtonWidget(int i) {
+    return SizedBox.fromSize(
+      size: Size(56, 56), // button width and height
+      child: ClipOval(
+        child: Material(
+          color: Colors.orangeAccent[100], // button color
+          child: InkWell(
+            splashColor: Colors.orangeAccent, // splash color
+            onTap: () async {
+              print("Touched "+i.toString());
+              _getRecipientInfo(i);
+            }, // button pressed
+            child: Column(
+              mainAxisAlignment: MainAxisAlignment.center,
+              children: <Widget>[
+                Icon(Icons.info), // icon
+                Text("Info"), // text
+              ],
+            ),
+          ),
+        ),
+      ),
+    );
+  }
+
+  Widget _getCallAndMessageWidget(int i){
+    return Wrap(
+      children: <Widget>[
+        _getMessageButtonWidget(i),
+        Container(
+          width: 10,
+        ),
+        _getCallButtonWidget(i),
+      ],
+    );
+  }
+
+  Widget _getRecipientInfo(int i) {
+    Alert(
+        context: context,
+        type: AlertType.info,
+        title: "Info",
+        desc: bloodRequestsList[i]['message'],
+        buttons: [
+          DialogButton(
+            color: Colors.lightBlueAccent,
+            onPressed: () {
+              Navigator.pop(context);
+            },
+            child: Text(
+              "Okay!",
+              style: TextStyle(color: Colors.white, fontSize: 20),
+            ),
+          ),
+        ]).show();
+  }
+
   SlidableController slidableController;
   List<_DonorInfo> get items => _getItemsList(bloodRequestsList);
 
@@ -69,7 +127,7 @@ class _UserNotifyPageState extends State<UserNotifyPage> {
           bloodRequestsList[i]['username'].toString(),
           _getSubtitle(i),
           _getAvatarColor(i),
-          _getCallButtonWidget(i)
+          _getCallAndMessageWidget(i)
       ),
     );
   }
@@ -104,16 +162,6 @@ class _UserNotifyPageState extends State<UserNotifyPage> {
                   ? Axis.vertical
                   : Axis.horizontal),
         ),
-      ),
-      floatingActionButton: FloatingActionButton(
-        backgroundColor: _fabColor,
-        onPressed: null,
-        child: _rotationAnimation == null
-            ? Icon(Icons.add)
-            : RotationTransition(
-                turns: _rotationAnimation,
-                child: Icon(Icons.add),
-              ),
       ),
     );
   }

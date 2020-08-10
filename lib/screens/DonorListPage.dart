@@ -19,11 +19,11 @@ class DonorListPage extends StatefulWidget {
 }
 
 class _DonorListPageState extends State<DonorListPage> {
+  List<Map> donorList;
   _DonorListPageState(this.donorList, this.mailid);
 
   TextEditingController messageFieldController = new TextEditingController();
   String message = '';
-  List<Map> donorList;
   String mailid;
   bool toggle = true;
   bool messageSubmitStatus = false;
