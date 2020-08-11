@@ -335,7 +335,7 @@ class _SettingsPageState extends State<SettingsPage> {
               Navigator.push(
                 context,
                 MaterialPageRoute(
-                    builder: (context) => DonorRequestPage(mailid: "1234")),
+                    builder: (context) => DonorRequestPage(mailid: mailid)),
               );
             },
           )

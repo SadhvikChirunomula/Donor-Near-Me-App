@@ -49,7 +49,7 @@ class _DonorRequestPageState extends State<DonorRequestPage> {
         hint: Text('Country'),
         searchHint: "Please Select Your Country",
         value: country,
-        iconEnabledColor : Colors.blue,
+        iconEnabledColor: Colors.blue,
         iconDisabledColor: Colors.black,
         dialogBox: true,
         icon: Icon(Icons.keyboard_arrow_down),
@@ -58,7 +58,8 @@ class _DonorRequestPageState extends State<DonorRequestPage> {
         style: TextStyle(color: Colors.black),
         onChanged: (String newValue) async {
           var response = await http.get(
-              'http://35.238.212.200:8080/areas/list/states?country=' + newValue);
+              'http://35.238.212.200:8080/areas/list/states?country=' +
+                  newValue);
           Map<String, dynamic> data = json.decode(response.body);
           setState(() {
             country = newValue;
@@ -96,14 +97,15 @@ class _DonorRequestPageState extends State<DonorRequestPage> {
         searchHint: "Please Select Your State",
 //        disabledHint: "Please select Country First",
         icon: Icon(Icons.keyboard_arrow_down),
-        iconEnabledColor : Colors.blue,
+        iconEnabledColor: Colors.blue,
         iconDisabledColor: Colors.black,
         iconSize: 24,
         displayClearIcon: false,
         style: TextStyle(color: Colors.black),
         onChanged: (String newValue) async {
           var response = await http.get(
-              'http://35.238.212.200:8080/areas/list/districts?state=' + newValue);
+              'http://35.238.212.200:8080/areas/list/districts?state=' +
+                  newValue);
           Map<String, dynamic> data = json.decode(response.body);
           setState(() {
             state = newValue;
@@ -140,14 +142,15 @@ class _DonorRequestPageState extends State<DonorRequestPage> {
         searchHint: "Please Select Your District",
 //        disabledHint: "Please select State First",
         icon: Icon(Icons.keyboard_arrow_down),
-        iconEnabledColor : Colors.blue,
+        iconEnabledColor: Colors.blue,
         displayClearIcon: false,
         iconDisabledColor: Colors.black,
         iconSize: 24,
         style: TextStyle(color: Colors.black),
         onChanged: (String newValue) async {
           var response = await http.get(
-              'http://35.238.212.200:8080/areas/list/cities?district=' + newValue);
+              'http://35.238.212.200:8080/areas/list/cities?district=' +
+                  newValue);
           Map<String, dynamic> data = json.decode(response.body);
           setState(() {
             district = newValue;
@@ -185,14 +188,14 @@ class _DonorRequestPageState extends State<DonorRequestPage> {
         searchHint: "Please Select Your City",
 //        disabledHint: "Please select District First",
         icon: Icon(Icons.keyboard_arrow_down),
-        iconEnabledColor : Colors.blue,
+        iconEnabledColor: Colors.blue,
         iconDisabledColor: Colors.black,
         displayClearIcon: false,
         iconSize: 24,
         style: TextStyle(color: Colors.black),
         onChanged: (String newValue) async {
-          var response = await http
-              .get('http://35.238.212.200:8080/areas/list/towns?city=' + newValue);
+          var response = await http.get(
+              'http://35.238.212.200:8080/areas/list/towns?city=' + newValue);
           Map<String, dynamic> data = json.decode(response.body);
           setState(() {
             city = newValue;
@@ -230,7 +233,7 @@ class _DonorRequestPageState extends State<DonorRequestPage> {
 //        disabledHint: "Please select City First",
         icon: Icon(Icons.keyboard_arrow_down),
         iconSize: 24,
-        iconEnabledColor : Colors.blue,
+        iconEnabledColor: Colors.blue,
         iconDisabledColor: Colors.black,
         displayClearIcon: false,
         style: TextStyle(color: Colors.black),
@@ -272,7 +275,7 @@ class _DonorRequestPageState extends State<DonorRequestPage> {
         hint: Text('Blood Group'),
         icon: Icon(Icons.keyboard_arrow_down),
         iconSize: 24,
-        iconEnabledColor : Colors.blue,
+        iconEnabledColor: Colors.blue,
         iconDisabledColor: Colors.black,
         displayClearIcon: false,
         style: TextStyle(color: Colors.black),
