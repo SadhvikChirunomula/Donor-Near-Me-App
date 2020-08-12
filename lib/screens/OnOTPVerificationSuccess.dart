@@ -1,5 +1,12 @@
 import 'dart:convert';
 
+import 'package:dnmui/models/OnOtpVerificationSuccessModel/AddUserRequest.dart';
+import 'package:dnmui/models/OnOtpVerificationSuccessModel/GetCitiesListRequest.dart';
+import 'package:dnmui/models/OnOtpVerificationSuccessModel/GetDistrictsListRequest.dart';
+import 'package:dnmui/models/OnOtpVerificationSuccessModel/GetPincodeRequest.dart';
+import 'package:dnmui/models/OnOtpVerificationSuccessModel/GetStatesListRequest.dart';
+import 'package:dnmui/models/OnOtpVerificationSuccessModel/GetTownsListRequest.dart';
+import 'package:dnmui/services/OnOtpVerificationSuccessService.dart';
 import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
 import 'package:searchable_dropdown/searchable_dropdown.dart';
@@ -33,40 +40,35 @@ class _OnOTPVerificationSuccessPageState
   String city;
   String town;
   String pincode;
-  List<String> countriesList = [];
+  List<String> countriesList = ['India'];
   List<String> statesList = [];
   List<String> districtList = [];
   List<String> citiesList = [];
   List<String> townsList = [];
+  List<String> bloodGroupsList = [];
+  OnOtpVerificationSuccessService onOtpVerificationSuccessService =
+      new OnOtpVerificationSuccessService();
+  GetStatesListRequest getStatesListRequest;
+  GetDistrictsListRequest getDistrictsListRequest;
+  GetCitiesListRequest getCitiesListRequest;
+  GetTownsListRequest getTownsListRequest;
+  GetPincodeRequest getPincodeRequest;
+  AddUserRequest addUserRequest;
 
   @override
   void initState() {
     // TODO: implement initState
     super.initState();
-    getCountriesList();
     userDetailsMap = jsonDecode(userDetailsJson);
-  }
-
-  Future<void> getCountriesList() async {
-    String baseUrl = "http://35.238.212.200:8080/areas/list/countries";
-    final response = await http.get(baseUrl);
-    final Map<String, dynamic> data = json.decode(response.body);
-    var jsonList = data['countriesList']['country'];
-    countriesList = [];
-    setState(() {
-      for (String x in jsonList) {
-        countriesList.add(x);
-      }
-    });
   }
 
   Widget _getCountryField() {
     return Container(
-      padding: EdgeInsets.symmetric(horizontal: 20.0),
+      padding: EdgeInsets.symmetric(horizontal: 10.0),
       decoration: BoxDecoration(
         borderRadius: BorderRadius.circular(32.0),
         border: Border.all(
-            color: Colors.black, style: BorderStyle.none, width: 0.50),
+            color: Colors.black, style: BorderStyle.solid, width: 0.50),
       ),
       child: SearchableDropdown.single(
         isExpanded: true,
@@ -81,10 +83,10 @@ class _OnOTPVerificationSuccessPageState
         displayClearIcon: false,
         style: TextStyle(color: Colors.black),
         onChanged: (String newValue) async {
-          var response = await http.get(
-              'http://35.238.212.200:8080/areas/list/states?country=' +
-                  newValue);
-          Map<String, dynamic> data = json.decode(response.body);
+          getStatesListRequest = new GetStatesListRequest();
+          getStatesListRequest.country = newValue;
+          Map<String, dynamic> data = await onOtpVerificationSuccessService
+              .getStatesList(getStatesListRequest);
           setState(() {
             country = newValue;
             //Todo make api call
@@ -108,11 +110,11 @@ class _OnOTPVerificationSuccessPageState
   Widget _getStateField(List<String> statesList) {
     return Container(
 //      width: double.infinity,
-      padding: EdgeInsets.symmetric(horizontal: 20.0),
+      padding: EdgeInsets.symmetric(horizontal: 10.0),
       decoration: BoxDecoration(
         borderRadius: BorderRadius.circular(32.0),
         border: Border.all(
-            color: Colors.black, style: BorderStyle.none, width: 0.50),
+            color: Colors.black, style: BorderStyle.solid, width: 0.50),
       ),
       child: SearchableDropdown.single(
         isExpanded: true,
@@ -127,10 +129,10 @@ class _OnOTPVerificationSuccessPageState
         displayClearIcon: false,
         style: TextStyle(color: Colors.black),
         onChanged: (String newValue) async {
-          var response = await http.get(
-              'http://35.238.212.200:8080/areas/list/districts?state=' +
-                  newValue);
-          Map<String, dynamic> data = json.decode(response.body);
+          getDistrictsListRequest = new GetDistrictsListRequest();
+          getDistrictsListRequest.state = newValue;
+          Map<String, dynamic> data = await onOtpVerificationSuccessService
+              .getDistrictsList(getDistrictsListRequest);
           setState(() {
             state = newValue;
             districtList = [];
@@ -152,11 +154,11 @@ class _OnOTPVerificationSuccessPageState
 
   Widget _getDistrictField(List<String> districtsList) {
     return Container(
-      padding: EdgeInsets.symmetric(horizontal: 20.0),
+      padding: EdgeInsets.symmetric(horizontal: 10.0),
       decoration: BoxDecoration(
         borderRadius: BorderRadius.circular(32.0),
         border: Border.all(
-            color: Colors.black, style: BorderStyle.none, width: 0.50),
+            color: Colors.black, style: BorderStyle.solid, width: 0.50),
       ),
 //      width: double.infinity,
       child: SearchableDropdown.single(
@@ -172,10 +174,10 @@ class _OnOTPVerificationSuccessPageState
         iconSize: 24,
         style: TextStyle(color: Colors.black),
         onChanged: (String newValue) async {
-          var response = await http.get(
-              'http://35.238.212.200:8080/areas/list/cities?district=' +
-                  newValue);
-          Map<String, dynamic> data = json.decode(response.body);
+          getCitiesListRequest = new GetCitiesListRequest();
+          getCitiesListRequest.district = newValue;
+          Map<String, dynamic> data = await onOtpVerificationSuccessService
+              .getCitiesList(getCitiesListRequest);
           setState(() {
             district = newValue;
             var jsonList = data['citiesList']['city'];
@@ -198,11 +200,11 @@ class _OnOTPVerificationSuccessPageState
 
   Widget _getCityField(List<String> citiesList) {
     return Container(
-      padding: EdgeInsets.symmetric(horizontal: 20.0),
+      padding: EdgeInsets.symmetric(horizontal: 10.0),
       decoration: BoxDecoration(
         borderRadius: BorderRadius.circular(32.0),
         border: Border.all(
-            color: Colors.black, style: BorderStyle.none, width: 0.50),
+            color: Colors.black, style: BorderStyle.solid, width: 0.50),
       ),
 //      width: double.infinity,
       child: SearchableDropdown.single(
@@ -218,9 +220,10 @@ class _OnOTPVerificationSuccessPageState
         iconSize: 24,
         style: TextStyle(color: Colors.black),
         onChanged: (String newValue) async {
-          var response = await http.get(
-              'http://35.238.212.200:8080/areas/list/towns?city=' + newValue);
-          Map<String, dynamic> data = json.decode(response.body);
+          getTownsListRequest = new GetTownsListRequest();
+          getTownsListRequest.city = newValue;
+          Map<String, dynamic> data = await onOtpVerificationSuccessService
+              .getTownsList(getTownsListRequest);
           setState(() {
             city = newValue;
             townsList = [];
@@ -243,11 +246,11 @@ class _OnOTPVerificationSuccessPageState
   Widget _getTownField(List<String> townsList) {
     return Container(
 //      width: double.infinity,
-      padding: EdgeInsets.symmetric(horizontal: 20.0),
+      padding: EdgeInsets.symmetric(horizontal: 10.0),
       decoration: BoxDecoration(
         borderRadius: BorderRadius.circular(32.0),
         border: Border.all(
-            color: Colors.black, style: BorderStyle.none, width: 0.50),
+            color: Colors.black, style: BorderStyle.solid, width: 0.50),
       ),
       child: SearchableDropdown.single(
         isExpanded: true,
@@ -262,11 +265,16 @@ class _OnOTPVerificationSuccessPageState
         displayClearIcon: false,
         style: TextStyle(color: Colors.black),
         onChanged: (String newValue) async {
-          var response =
-              await http.get('http://35.238.212.200:8080/list/bloodgroups');
-          Map<String, dynamic> data = json.decode(response.body);
+          Map<String, dynamic> data =
+              await onOtpVerificationSuccessService.getBloodGroupsList();
+          bloodGroupsList = [];
           setState(() {
             town = newValue;
+            bloodGroupsList = [];
+            var jsonList = data['bloodGroupsList']['blood_group'];
+            for (String x in jsonList) {
+              bloodGroupsList.add(x);
+            }
           });
         },
         items: townsList.map<DropdownMenuItem<String>>((String value) {
@@ -317,30 +325,23 @@ class _OnOTPVerificationSuccessPageState
   }
 
   _addUserToDb(Map<String, dynamic> userDetailsMap) async {
-    http.Response response =
-        await http.post('http://35.238.212.200:8080/addUser',
-            headers: <String, String>{
-              'Content-Type': 'application/json; charset=UTF-8',
-            },
-            body: jsonEncode(<String, String>{
-              'bloodgroup': userDetailsMap['bloodgroup'],
-              'city': userDetailsMap['city'],
-              'country': userDetailsMap['country'],
-              'district': userDetailsMap['district'],
-              'mail_notification': userDetailsMap['mail_notification'],
-              'mailid': userDetailsMap['mailid'],
-              'password': userDetailsMap['password'],
-              'phonenumber': userDetailsMap['phonenumber'],
-              'pincode': userDetailsMap['pincode'],
-              'sms_notification': userDetailsMap['sms_notification'],
-              'state': userDetailsMap['state'],
-              'town': userDetailsMap['town'],
-              'username': userDetailsMap['username'],
-              'fcmtoken': userDetailsMap['fcmtoken']
-            }));
+    addUserRequest = new AddUserRequest();
+    addUserRequest.bloodgroup = userDetailsMap['bloodgroup'];
+    addUserRequest.city =userDetailsMap['city'];
+    addUserRequest.country =userDetailsMap['country'];
+    addUserRequest.district = userDetailsMap['district'];
+    addUserRequest.mail_notification =userDetailsMap['mail_notification'];
+    addUserRequest.mailid = userDetailsMap['mailid'];
+    addUserRequest.password = userDetailsMap['password'];
+    addUserRequest.phonenumber = userDetailsMap['phonenumber'];
+    addUserRequest.pincode = userDetailsMap['pincode'];
+    addUserRequest.sms_notification = userDetailsMap['sms_notification'];
+    addUserRequest.state = userDetailsMap['state'];
+    addUserRequest.town = userDetailsMap['town'];
+    addUserRequest.username = userDetailsMap['username'];
+    addUserRequest.fcmtoken = userDetailsMap['fcmtoken'];
 
-    print("Add User Response " + response.body);
-    Map<String, dynamic> addedData = json.decode(response.body);
+    Map<String, dynamic> addedData = await onOtpVerificationSuccessService.addUserToDb(addUserRequest);
     if (addedData['status'] ==
         'Added User Succesfully. Please sign in to continue') {
       print('Hello World');
@@ -354,18 +355,12 @@ class _OnOTPVerificationSuccessPageState
   }
 
   _getPincodeValue() async {
-    String baseUrl = "http://35.238.212.200:8080/areas/pincode?city=" +
-        city +
-        "&country=" +
-        country +
-        "&district=" +
-        district +
-        "&state=" +
-        state +
-        "&town=" +
-        town;
-    final response = await http.get(baseUrl);
-    final Map<String, dynamic> data = json.decode(response.body);
+    getPincodeRequest = new GetPincodeRequest();
+    getPincodeRequest.state=state;
+    getPincodeRequest.district=district;
+    getPincodeRequest.country=country;
+    getPincodeRequest.city=city;
+    Map<String, dynamic> data = await onOtpVerificationSuccessService.getPincode(getPincodeRequest);
     setState(() {
       pincode = data['pincode'];
     });
@@ -380,6 +375,7 @@ class _OnOTPVerificationSuccessPageState
         minWidth: MediaQuery.of(context).size.width,
         padding: EdgeInsets.fromLTRB(20.0, 15.0, 20.0, 15.0),
         onPressed: () async {
+          _getPincodeValue();
           String userDetailsJson = jsonEncode(<String, String>{
             'bloodgroup': userDetailsMap['bloodgroup'],
             'city': city,

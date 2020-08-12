@@ -1,5 +1,8 @@
 import 'dart:convert';
 
+import 'package:dnmui/models/DonorListScreenModel/NotifyDonorRequest.dart';
+import 'package:dnmui/models/DonorListScreenModel/RequestDonorRequest.dart';
+import 'package:dnmui/services/DonorListScreenService.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_share/flutter_share.dart';
 import 'package:flutter_slidable/flutter_slidable.dart';
@@ -28,6 +31,9 @@ class _DonorListPageState extends State<DonorListPage> {
   bool toggle = true;
   bool messageSubmitStatus = false;
   List<int> iList = [];
+  RequestDonorRequest requestDonorRequest;
+  NotifyDonorRequest notifyDonorRequest;
+  DonorListScreenService donorListScreenService = new DonorListScreenService();
 
   @override
   void initState() {
@@ -64,41 +70,16 @@ class _DonorListPageState extends State<DonorListPage> {
       borderRadius: BorderRadius.circular(30.0),
       color: Color(0xff01A0C7),
       child: MaterialButton(
-//        padding: EdgeInsets.fromLTRB(20.0, 15.0, 20.0, 15.0),
         onPressed: () async {
-          print(donorList[i]['mailid']);
-          http.Response notificationResponse = await http.post(
-              'https://fcm.googleapis.com/fcm/send',
-              headers: <String, String>{
-                'Content-Type': 'application/json; charset=UTF-8',
-                'Authorization':
-                    'key=AAAA2XVt3bQ:APA91bGj9EPpcVmG4Q0ZDJ7EdqBrHWlVi7PSiN_SlSt_15ywGcLj6GIOVlseYujhzESj2TlLglZKpjFp1n4B3AsrehZMZgLYZ8FVcZnglRiJmRiQNazHGmQrmSZjFLOsZDuae-HJZDo-'
-              },
-              body: '''{
-                "notification": {
-                  "body": "Someone Around You Need Blood",
-                  "title": "Need Blood"
-                },
-                "priority": "high",
-                "data": {
-                  "click_action": "FLUTTER_NOTIFICATION_CLICK",
-                  "id": "1",
-                  "status": "done"
-                },
-                "to": "cufxOXvkp-4:APA91bFYTAw6VcPL_LD-oPDKMy52AQ4COxuX3d_J3M2_pPTB7OBzUiXovKdQDff7sXWhDC2boiOXU9QfcDH_T9BxXgQXDfNgBqugfElws3xntsgzykWfTQotBFz44-0i0U1Y45WtaBlV"
-              }''');
+          requestDonorRequest = new RequestDonorRequest();
+          requestDonorRequest.donorId = donorList[i]['mailid'];
+          requestDonorRequest.message = message == '' ? _getRequestBloodMessage() : message;
+          requestDonorRequest.recipientId = mailid;
 
-          http.Response dbResponse =
-              await http.post('http://35.238.212.200:8080/donorrequest',
-                  headers: <String, String>{
-                    'Content-Type': 'application/json; charset=UTF-8',
-                  },
-                  body: jsonEncode(<String, String>{
-                    'donorId': donorList[i]['mailid'],
-                    'message':
-                        message == '' ? _getRequestBloodMessage() : message,
-                    'receipentId': mailid,
-                  }));
+          notifyDonorRequest = new NotifyDonorRequest();
+          Map<String,dynamic> notificationResponsedata = await donorListScreenService.notifyDonor(notifyDonorRequest);
+          Map<String,dynamic> data = await donorListScreenService.addRequestToDb(requestDonorRequest);
+
           setState(() {
             iList[i] = 1;
             print(iList);

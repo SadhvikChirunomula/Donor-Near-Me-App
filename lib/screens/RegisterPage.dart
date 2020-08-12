@@ -1,6 +1,10 @@
 import 'dart:convert';
 
+import 'package:dnmui/models/RegisterScreenModel/GetUserOtpRequest.dart';
+import 'package:dnmui/models/RegisterScreenModel/SendOtpRequest.dart';
+import 'package:dnmui/models/RegisterScreenModel/ValidateOtpRequest.dart';
 import 'package:dnmui/screens/OnOTPVerificationSuccess.dart';
+import 'package:dnmui/services/RegisterScreenService.dart';
 import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:flutter/material.dart';
 import 'package:fswitch/fswitch.dart';
@@ -39,6 +43,11 @@ class _RegisterPageState extends State<RegisterPage> {
   bool smsNotification = true;
   bool mailNotification = true;
   bool _passwordVisible = false;
+  RegisterScreenService registerScreenService = new RegisterScreenService();
+  ValidateOtpRequest validateOtpRequest;
+  SendOtpRequest sendOtpRequest;
+  GetUserOtpRequest getUserOtpRequest;
+  
 
   @override
   void initState() {
@@ -48,9 +57,7 @@ class _RegisterPageState extends State<RegisterPage> {
   }
 
   _getBloodGroupsList() async {
-    var response =
-        await http.get('http://35.238.212.200:8080/list/bloodgroups');
-    Map<String, dynamic> data = json.decode(response.body);
+    Map<String, dynamic> data = await registerScreenService.getBloodGroupsList();
     bloodGroupsList = [];
     setState(() {
       var jsonList = data['bloodGroupsList']['blood_group'];
@@ -74,14 +81,10 @@ class _RegisterPageState extends State<RegisterPage> {
   }
 
   _validateOtp(Map userDetailsMap, String otp) async {
-    http.Response response = await http.post(
-        'http://35.238.212.200:8080/validateotp',
-        headers: <String, String>{
-          'Content-Type': 'application/json; charset=UTF-8',
-        },
-        body: jsonEncode(
-            <String, String>{'mailid': userDetailsMap['mailid'], 'otp': otp}));
-    Map<String, dynamic> data = json.decode(response.body);
+    validateOtpRequest = new ValidateOtpRequest();
+    validateOtpRequest.mailid = userDetailsMap['mailid'];
+    validateOtpRequest.otp = otp;
+    Map<String, dynamic> data = await registerScreenService.validateOtp(validateOtpRequest);
     print(_userDetailsMapToJson(userDetailsMap));
     if (data['error'] == null) {
       Navigator.push(
@@ -166,7 +169,9 @@ class _RegisterPageState extends State<RegisterPage> {
 
   _firebaseRegister() {
 //    _firebaseMessaging.deleteInstanceID();
-//    _firebaseMessaging.getToken().then((token) => fcmtoken = token);
+  setState(() {
+    _firebaseMessaging.getToken().then((token) => fcmtoken = token);
+  });
   }
 
   Widget _getHelloUserText() {
@@ -208,7 +213,7 @@ class _RegisterPageState extends State<RegisterPage> {
         ));
   }
 
-  void _sendOtpMethod(String phoneNumber, String otp) {
+  void _sendOtpAsSms(String phoneNumber, String otp) {
     SmsSender sender = new SmsSender();
     sender.sendSms(
         new SmsMessage(phoneNumber, 'OTP for Donor Near Me is ' + otp));
@@ -358,8 +363,6 @@ class _RegisterPageState extends State<RegisterPage> {
     );
   }
 
-
-
   Widget _getRegisterButton() {
     return Material(
       elevation: 5.0,
@@ -384,20 +387,14 @@ class _RegisterPageState extends State<RegisterPage> {
             });
           });
           print(userDetailsJson);
-          http.Response response =
-              await http.post('http://35.238.212.200:8080/sendotp',
-                  headers: <String, String>{
-                    'Content-Type': 'application/json; charset=UTF-8',
-                  },
-                  body: jsonEncode(<String, String>{
-                    'mailid': emailFieldController.text,
-                  }));
+          sendOtpRequest.mailid = emailFieldController.text;
+          http.Response response = await registerScreenService.sendOtpToUser(sendOtpRequest);
           print(response.statusCode);
           if (response.statusCode == 200) {
             _getOtp(emailFieldController.text);
             await Future.delayed(const Duration(seconds: 2));
             print("OTP : " + otp);
-            _sendOtpMethod(mobileNumberFieldController.text, otp);
+            _sendOtpAsSms(mobileNumberFieldController.text, otp);
             print("Taking you to OTP Page");
             _getOTPVerifyAlertPage(userDetailsJson);
           } else {
@@ -414,13 +411,9 @@ class _RegisterPageState extends State<RegisterPage> {
 
   _getOtp(String mailid) async {
     print("Mailid for OTP : " + mailid);
-    http.Response response = await http.get(
-        'http://35.238.212.200:8080/getuserotp?mailid=' + mailid,
-        headers: <String, String>{
-          'Content-Type': 'application/json; charset=UTF-8',
-        });
-
-    Map<String, dynamic> data = json.decode(response.body);
+    getUserOtpRequest = new GetUserOtpRequest();
+    getUserOtpRequest.mailid = mailid;
+    Map<String ,dynamic> data = await registerScreenService.getUserOtp(getUserOtpRequest);
     print("OTP in data : " + data['otp']);
     setState(() {
       otp = data['otp'];

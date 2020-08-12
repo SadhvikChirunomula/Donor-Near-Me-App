@@ -1,5 +1,12 @@
 import 'dart:convert';
 
+import 'package:dnmui/models/DonorRequestScreenModel/GetAvailableDonorsListRequest.dart';
+import 'package:dnmui/models/DonorRequestScreenModel/GetCitiesListRequest.dart';
+import 'package:dnmui/models/DonorRequestScreenModel/GetDistrictsListRequest.dart';
+import 'package:dnmui/models/DonorRequestScreenModel/GetStatesListRequest.dart';
+import 'package:dnmui/models/DonorRequestScreenModel/GetTownsListRequest.dart';
+import 'package:dnmui/models/OnLoginScreenModel/GetBloodRequestListRequest.dart';
+import 'package:dnmui/services/DonorRequestScreenService.dart';
 import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
 import 'package:searchable_dropdown/searchable_dropdown.dart';
@@ -35,6 +42,14 @@ class _DonorRequestPageState extends State<DonorRequestPage> {
   List<String> townsList = [];
   List<String> bloodGroupsList = [];
   List<Map> donorList = [];
+  DonorRequestScreenService donorRequestScreenService = new DonorRequestScreenService();
+  GetStatesListRequest getStatesListRequest;
+  GetDistrictsListRequest getDistrictsListRequest;
+  GetCitiesListRequest getCitiesListRequest;
+  GetTownsListRequest getTownsListRequest;
+  GetAvailableDonorsListRequest getAvailableDonorsListRequest;
+  GetBloodRequestListRequest getBloodRequestListRequest;
+
 
   Widget _getCountryField() {
     return Container(
@@ -57,10 +72,9 @@ class _DonorRequestPageState extends State<DonorRequestPage> {
         displayClearIcon: false,
         style: TextStyle(color: Colors.black),
         onChanged: (String newValue) async {
-          var response = await http.get(
-              'http://35.238.212.200:8080/areas/list/states?country=' +
-                  newValue);
-          Map<String, dynamic> data = json.decode(response.body);
+          getStatesListRequest = new GetStatesListRequest();
+          getStatesListRequest.country = newValue;
+          Map<String, dynamic> data = await donorRequestScreenService.getStatesList(getStatesListRequest);
           setState(() {
             country = newValue;
             //Todo make api call
@@ -103,10 +117,9 @@ class _DonorRequestPageState extends State<DonorRequestPage> {
         displayClearIcon: false,
         style: TextStyle(color: Colors.black),
         onChanged: (String newValue) async {
-          var response = await http.get(
-              'http://35.238.212.200:8080/areas/list/districts?state=' +
-                  newValue);
-          Map<String, dynamic> data = json.decode(response.body);
+          getDistrictsListRequest = new GetDistrictsListRequest();
+          getDistrictsListRequest.state = newValue;
+          Map<String, dynamic> data = await donorRequestScreenService.getDistrictsList(getDistrictsListRequest);
           setState(() {
             state = newValue;
             districtList = [];
@@ -148,10 +161,9 @@ class _DonorRequestPageState extends State<DonorRequestPage> {
         iconSize: 24,
         style: TextStyle(color: Colors.black),
         onChanged: (String newValue) async {
-          var response = await http.get(
-              'http://35.238.212.200:8080/areas/list/cities?district=' +
-                  newValue);
-          Map<String, dynamic> data = json.decode(response.body);
+          getCitiesListRequest = new GetCitiesListRequest();
+          getCitiesListRequest.district = newValue;
+          Map<String, dynamic> data = await donorRequestScreenService.getCitiesList(getCitiesListRequest);
           setState(() {
             district = newValue;
             var jsonList = data['citiesList']['city'];
@@ -194,9 +206,9 @@ class _DonorRequestPageState extends State<DonorRequestPage> {
         iconSize: 24,
         style: TextStyle(color: Colors.black),
         onChanged: (String newValue) async {
-          var response = await http.get(
-              'http://35.238.212.200:8080/areas/list/towns?city=' + newValue);
-          Map<String, dynamic> data = json.decode(response.body);
+          getTownsListRequest = new GetTownsListRequest();
+          getTownsListRequest.city = newValue;
+          Map<String, dynamic> data = await donorRequestScreenService.getTownsList(getTownsListRequest);
           setState(() {
             city = newValue;
             townsList = [];
@@ -238,9 +250,8 @@ class _DonorRequestPageState extends State<DonorRequestPage> {
         displayClearIcon: false,
         style: TextStyle(color: Colors.black),
         onChanged: (String newValue) async {
-          var response =
-              await http.get('http://35.238.212.200:8080/list/bloodgroups');
-          Map<String, dynamic> data = json.decode(response.body);
+          Map<String, dynamic> data = await donorRequestScreenService.getBloodGroupsList();
+          bloodGroupsList = [];
           setState(() {
             town = newValue;
             bloodGroupsList = [];
@@ -305,32 +316,14 @@ class _DonorRequestPageState extends State<DonorRequestPage> {
         minWidth: MediaQuery.of(context).size.width,
 //        padding: EdgeInsets.fromLTRB(20.0, 15.0, 20.0, 15.0),
         onPressed: () async {
-          print('http://35.238.212.200:8080/getdonors/available?country=' +
-              country +
-              '&state=' +
-              state +
-              '&district=' +
-              district +
-              '&city=' +
-              city +
-              '&bloodgroup=' +
-              bloodGroup +
-              '&town=' +
-              town);
-          var response = await http.get(
-              'http://35.238.212.200:8080/getdonors/available?country=' +
-                  country +
-                  '&state=' +
-                  state +
-                  '&district=' +
-                  district +
-                  '&city=' +
-                  city +
-                  '&bloodgroup=' +
-                  bloodGroup +
-                  '&town=' +
-                  town);
-          Map<String, dynamic> data = json.decode(response.body);
+          getAvailableDonorsListRequest = new GetAvailableDonorsListRequest();
+          getAvailableDonorsListRequest.town = town;
+          getAvailableDonorsListRequest.bloodGroup = bloodGroup;
+          getAvailableDonorsListRequest.city = city;
+          getAvailableDonorsListRequest.district = district;
+          getAvailableDonorsListRequest.state = state;
+          getAvailableDonorsListRequest.country = country;
+          Map<String, dynamic> data = await donorRequestScreenService.getAvailableDonors(getAvailableDonorsListRequest);
           setState(() {
             var jsonList = data['donorsList'];
             donorList = [];
@@ -388,7 +381,7 @@ class _DonorRequestPageState extends State<DonorRequestPage> {
                       ),
                     ),
                     Text(
-                      "Please provide location where you require blood. Please first select Country..then State..District..City..Town. \n Based on the provided location we will give you the details of the donors nearby",
+                      "Please provide location where you require blood. Please first select Country..then State..District..City..Town. \nBased on the provided location we will give you the details of the donors nearby",
                       style: TextStyle(color: Colors.white),
                     ),
                   ],

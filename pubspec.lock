@@ -30,14 +30,14 @@ packages:
     source: hosted
     version: "2.4.1"
   auto_size_text:
-    dependency: "direct dev"
+    dependency: "direct main"
     description:
       name: auto_size_text
       url: "https://pub.dartlang.org"
     source: hosted
     version: "2.1.0"
   badges:
-    dependency: "direct dev"
+    dependency: "direct main"
     description:
       name: badges
       url: "https://pub.dartlang.org"
@@ -58,7 +58,7 @@ packages:
     source: hosted
     version: "2.2.0+1"
   call_number:
-    dependency: "direct dev"
+    dependency: "direct main"
     description:
       name: call_number
       url: "https://pub.dartlang.org"
@@ -93,7 +93,7 @@ packages:
     source: hosted
     version: "1.14.12"
   contactus:
-    dependency: "direct dev"
+    dependency: "direct main"
     description:
       name: contactus
       url: "https://pub.dartlang.org"
@@ -128,7 +128,7 @@ packages:
     source: hosted
     version: "5.2.1"
   firebase_messaging:
-    dependency: "direct dev"
+    dependency: "direct main"
     description:
       name: firebase_messaging
       url: "https://pub.dartlang.org"
@@ -189,7 +189,7 @@ packages:
     source: hosted
     version: "1.0.2+1"
   flutter_slidable:
-    dependency: "direct dev"
+    dependency: "direct main"
     description:
       name: flutter_slidable
       url: "https://pub.dartlang.org"
@@ -206,14 +206,14 @@ packages:
     source: sdk
     version: "0.0.0"
   fswitch:
-    dependency: "direct dev"
+    dependency: "direct main"
     description:
       name: fswitch
       url: "https://pub.dartlang.org"
     source: hosted
     version: "1.1.2"
   http:
-    dependency: "direct dev"
+    dependency: "direct main"
     description:
       name: http
       url: "https://pub.dartlang.org"
@@ -234,7 +234,7 @@ packages:
     source: hosted
     version: "2.1.12"
   input_sheet:
-    dependency: "direct dev"
+    dependency: "direct main"
     description:
       name: input_sheet
       url: "https://pub.dartlang.org"
@@ -269,7 +269,7 @@ packages:
     source: hosted
     version: "1.2.4"
   marquee_flutter:
-    dependency: "direct dev"
+    dependency: "direct main"
     description:
       name: marquee_flutter
       url: "https://pub.dartlang.org"
@@ -304,7 +304,7 @@ packages:
     source: hosted
     version: "0.0.4"
   otp_text_field:
-    dependency: "direct dev"
+    dependency: "direct main"
     description:
       name: otp_text_field
       url: "https://pub.dartlang.org"
@@ -430,7 +430,7 @@ packages:
     source: hosted
     version: "2.1.3"
   rflutter_alert:
-    dependency: "direct dev"
+    dependency: "direct main"
     description:
       name: rflutter_alert
       url: "https://pub.dartlang.org"
@@ -451,7 +451,7 @@ packages:
     source: hosted
     version: "1.1.3"
   settings_ui:
-    dependency: "direct dev"
+    dependency: "direct main"
     description:
       name: settings_ui
       url: "https://pub.dartlang.org"
@@ -463,7 +463,7 @@ packages:
     source: sdk
     version: "0.0.99"
   sms:
-    dependency: "direct dev"
+    dependency: "direct main"
     description:
       name: sms
       url: "https://pub.dartlang.org"

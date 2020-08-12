@@ -1,10 +1,11 @@
-import 'dart:convert';
-
 import 'package:contactus/contactus.dart';
+import 'package:dnmui/models/LoginScreen/AuthenticateRequest.dart';
+import 'package:dnmui/models/LoginScreen/UpdateFcmTokenRequest.dart';
 import 'package:dnmui/screens/RegisterPage.dart';
+import 'file:///F:/dnmuiapp/DonorNearMeApp/lib/services/LoginScreenService.dart';
 import 'package:flutter/material.dart';
+import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:flutter_share/flutter_share.dart';
-import 'package:http/http.dart' as http;
 
 import 'OnLoginPage.dart';
 
@@ -21,9 +22,15 @@ class _LoginPageState extends State<LoginPage> {
   TextStyle style = TextStyle(fontFamily: 'Montserrat', fontSize: 20.0);
   TextEditingController emailFieldController = new TextEditingController();
   TextEditingController passwordFieldController = new TextEditingController();
+  FirebaseMessaging _firebaseMessaging ;
   String error = '';
+  String fcmToken= '';
   bool _passwordVisible = false;
 
+  LoginScreenService loginScreenService = new LoginScreenService();
+  AuthenticateModel authenticateModel;
+  UpdateFcmTokenRequest updateFcmTokenRequest;
+  
   Widget _appOwnerDetails() {
     return MaterialApp(
       debugShowCheckedModeBanner: false,
@@ -90,17 +97,14 @@ class _LoginPageState extends State<LoginPage> {
         minWidth: MediaQuery.of(context).size.width,
         padding: EdgeInsets.fromLTRB(20.0, 15.0, 20.0, 15.0),
         onPressed: () async {
-          http.Response response = await http.post(
-              'http://35.238.212.200:8080/authenticate',
-              headers: <String, String>{
-                'Content-Type': 'application/json; charset=UTF-8',
-              },
-              body: jsonEncode(<String, String>{
-                'mailid': emailFieldController.text,
-                'password': passwordFieldController.text
-              }));
-          Map<String, dynamic> data = json.decode(response.body);
+          authenticateModel = new AuthenticateModel();
+          updateFcmTokenRequest = new UpdateFcmTokenRequest();
+          authenticateModel.mailid = emailFieldController.text;
+          authenticateModel.password = passwordFieldController.text;
+          Map<String, dynamic> data = await loginScreenService.authenticateApi(authenticateModel);
           if (data['error'] == null) {
+            _firebaseRegister();
+            _updateTokenInDb(updateFcmTokenRequest);
             setState(() {
               error = '';
             });
@@ -135,7 +139,7 @@ class _LoginPageState extends State<LoginPage> {
       },
       child: Container(
         margin: EdgeInsets.symmetric(vertical: 20),
-        padding: EdgeInsets.all(15),
+        padding: EdgeInsets.all(10),
         alignment: Alignment.bottomCenter,
         child: Row(
           mainAxisAlignment: MainAxisAlignment.center,
@@ -164,6 +168,13 @@ class _LoginPageState extends State<LoginPage> {
         text: 'Click on the URL below to download the App',
         linkUrl: 'http://donornearme.com/',
         chooserTitle: 'Find a blood donor near you!');
+  }
+
+  _firebaseRegister() {
+    _firebaseMessaging = new FirebaseMessaging();
+    setState(() {
+      _firebaseMessaging.getToken().then((token) => fcmToken = token);
+    });
   }
 
   @override
@@ -239,5 +250,10 @@ class _LoginPageState extends State<LoginPage> {
         )),
       ),
     );
+  }
+
+  void _updateTokenInDb(UpdateFcmTokenRequest updateFcmTokenRequest) {
+    Future<Map<String, dynamic>> data =  loginScreenService.updateFcmToken(updateFcmTokenRequest);
+    print(data);
   }
 }

@@ -1,6 +1,9 @@
 import 'dart:convert';
 
+import 'package:dnmui/models/SettingsScreenModel/GetUserDetailsRequest.dart';
+import 'package:dnmui/models/SettingsScreenModel/UpdateUserRequest.dart';
 import 'package:dnmui/screens/OnLoginPage.dart';
+import 'package:dnmui/services/SettingsScreenService.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_feather_icons/flutter_feather_icons.dart';
 import 'package:http/http.dart' as http;
@@ -30,6 +33,9 @@ class _SettingsPageState extends State<SettingsPage> {
   String _mobileNumber;
   String _bloodGroup;
   String updatedUserDetailsJson;
+  GetUserDetailsRequest getUserDetailsRequest;
+  UpdateUserRequest updateUserRequest;
+  SettingsScreenService settingsScreenService = new SettingsScreenService();
 
   _SettingsPageState(this.mailid);
 
@@ -42,9 +48,12 @@ class _SettingsPageState extends State<SettingsPage> {
   }
 
   _getUserDetails(String mailid) async {
-    var response = await http
-        .get('http://35.238.212.200:8080/getdetails/user?mailid=' + mailid);
-    Map<String, dynamic> data = json.decode(response.body);
+    getUserDetailsRequest = new GetUserDetailsRequest();
+    getUserDetailsRequest.mailid = mailid;
+
+    Map<String, dynamic> data =
+        await settingsScreenService.getUserDetails(getUserDetailsRequest);
+
     setState(() {
       userDetailsMap = data['userDetails'][0];
       _fullName = userDetailsMap['username'];
@@ -229,13 +238,12 @@ class _SettingsPageState extends State<SettingsPage> {
     );
   }
 
-  _getUpdateSuccessAlert(){
+  _getUpdateSuccessAlert() {
     Alert(
       context: context,
       type: AlertType.success,
       title: "Updated Successfully",
-      desc:
-      "Updated user Succesfully",
+      desc: "Updated user Succesfully",
       buttons: [
         DialogButton(
           child: Text(
@@ -253,7 +261,7 @@ class _SettingsPageState extends State<SettingsPage> {
     ).show();
   }
 
-  _getUpdateFailAlert(){
+  _getUpdateFailAlert() {
     Alert(
       context: context,
       type: AlertType.error,
@@ -265,7 +273,7 @@ class _SettingsPageState extends State<SettingsPage> {
             "Okay!",
             style: TextStyle(color: Colors.white, fontSize: 20),
           ),
-          onPressed: (){
+          onPressed: () {
             Navigator.pop(context);
           },
           width: 120,
@@ -283,34 +291,31 @@ class _SettingsPageState extends State<SettingsPage> {
         minWidth: MediaQuery.of(context).size.width,
         padding: EdgeInsets.fromLTRB(20.0, 15.0, 20.0, 15.0),
         onPressed: () async {
-          http.Response response =
-              await http.put('http://35.238.212.200:8080/updateUser?mailid='+mailid,
-                  headers: <String, String>{
-                    'Content-Type': 'application/json; charset=UTF-8',
-                    'mailid':mailid
-                  },
-                  body: jsonEncode(<String, String>{
-                    'bloodgroup': _bloodGroup,
-                    'mail_notification': _mailNotification,
-                    'mailid': mailid,
-                    'phonenumber': _mobileNumber,
-                    'sms_notification': _smsNotification,
-                    'username': _fullName,
-                    'city':userDetailsMap['city'],
-                    'country':userDetailsMap['country'],
-                    'district':userDetailsMap['district'],
-                    'state':userDetailsMap['state'],
-                    'town':userDetailsMap['town'],
-                    'pincode':userDetailsMap['pincode'],
-                    'password':userDetailsMap['password']
-                  }));
+          updateUserRequest = new UpdateUserRequest();
+          updateUserRequest.bloodGroup = _bloodGroup;
+          updateUserRequest.mailNotification = _mailNotification;
+          updateUserRequest.mailid = mailid;
+          updateUserRequest.mobileNumber = _mobileNumber;
+          updateUserRequest.smsNotification = _smsNotification;
+          updateUserRequest.fullName = _fullName;
+          updateUserRequest.city = userDetailsMap['city'];
+          updateUserRequest.country = userDetailsMap['country'];
+          updateUserRequest.district = userDetailsMap['district'];
+          updateUserRequest.state = userDetailsMap['state'];
+          updateUserRequest.town = userDetailsMap['town'];
+          updateUserRequest.pincode = userDetailsMap['pincode'];
+          updateUserRequest.password = userDetailsMap['password'];
+
+          http.Response response = await settingsScreenService
+              .updateUserDetails(mailid, updateUserRequest);
+
           print(response.statusCode);
           if (response.statusCode == 200) {
             Map<String, dynamic> data = json.decode(response.body);
-            if(data['status'] == null){
+            if (data['status'] == null) {
               print(data['error']);
               _getUpdateFailAlert();
-            }else{
+            } else {
               print(data['status']);
               _getUpdateSuccessAlert();
             }

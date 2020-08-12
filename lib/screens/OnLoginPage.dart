@@ -1,9 +1,12 @@
 import 'dart:convert';
 
 import 'package:badges/badges.dart';
+import 'package:dnmui/constants/Common.dart';
+import 'package:dnmui/models/OnLoginScreenModel/GetBloodRequestListRequest.dart';
 import 'package:dnmui/screens/ContactUsPage.dart';
 import 'package:dnmui/screens/DonorRequestPage.dart';
 import 'package:dnmui/screens/LoginPage.dart';
+import 'file:///F:/dnmuiapp/DonorNearMeApp/lib/services/OnLoginScreenService.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
@@ -23,22 +26,24 @@ class OnLoginPage extends StatefulWidget {
 
 class _OnLoginPageState extends State<OnLoginPage> {
   String mailid;
-
+  OnLoginScreenService onLoginScreenService;
+  GetBloodRequestListRequest getBloodRequestListRequest;
   _OnLoginPageState(this.mailid);
 
   List<Map> bloodRequestsList = [];
 
   Future<List<Map>> _getBloodRequestsList(String mailid) async {
-    String baseUrl =
-        "http://35.238.212.200:8080/getbloodrequests?mailid=" + mailid;
-    final response = await http.get(baseUrl);
-    Map<String, dynamic> data = json.decode(response.body);
+    onLoginScreenService = new OnLoginScreenService();
+    getBloodRequestListRequest = new GetBloodRequestListRequest();
+    getBloodRequestListRequest.mailid = mailid;
+    Map<String, dynamic> data = await onLoginScreenService.getBloodRequestsList(getBloodRequestListRequest);;
     var jsonList = data['requestsList'];
+    List<Map> tempList = [];
     for (Map x in jsonList) {
-      print(bloodRequestsList);
-      bloodRequestsList.add(x);
+      tempList.add(x);
     }
-    return bloodRequestsList;
+    print(tempList);
+    return tempList;
   }
 
   Widget _notificationBadge() {
@@ -134,7 +139,7 @@ class _OnLoginPageState extends State<OnLoginPage> {
 //          minWidth: MediaQuery.of(context).size.width,
               padding: EdgeInsets.fromLTRB(20.0, 15.0, 20.0, 15.0),
               onPressed: () async {
-                _getBloodRequestsList(mailid);
+                bloodRequestsList = await _getBloodRequestsList(mailid);
                 Navigator.push(
                   context,
                   MaterialPageRoute(
