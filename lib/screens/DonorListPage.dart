@@ -6,7 +6,6 @@ import 'package:dnmui/services/DonorListScreenService.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_share/flutter_share.dart';
 import 'package:flutter_slidable/flutter_slidable.dart';
-import 'package:http/http.dart' as http;
 import 'package:rflutter_alert/rflutter_alert.dart';
 
 class DonorListPage extends StatefulWidget {
@@ -73,12 +72,15 @@ class _DonorListPageState extends State<DonorListPage> {
         onPressed: () async {
           requestDonorRequest = new RequestDonorRequest();
           requestDonorRequest.donorId = donorList[i]['mailid'];
-          requestDonorRequest.message = message == '' ? _getRequestBloodMessage() : message;
+          requestDonorRequest.message =
+              message == '' ? _getRequestBloodMessage() : message;
           requestDonorRequest.recipientId = mailid;
-
           notifyDonorRequest = new NotifyDonorRequest();
-          Map<String,dynamic> notificationResponsedata = await donorListScreenService.notifyDonor(notifyDonorRequest);
-          Map<String,dynamic> data = await donorListScreenService.addRequestToDb(requestDonorRequest);
+          notifyDonorRequest.mailid = donorList[i]['mailid'];
+          Map<String, dynamic> notificationResponsedata =
+              await donorListScreenService.notifyDonor(notifyDonorRequest);
+          Map<String, dynamic> data =
+              await donorListScreenService.addRequestToDb(requestDonorRequest);
 
           setState(() {
             iList[i] = 1;
@@ -107,16 +109,16 @@ class _DonorListPageState extends State<DonorListPage> {
     return Container(
         decoration: BoxDecoration(
             gradient: LinearGradient(colors: [
-              Colors.red,
-              Colors.orange,
-            ])),
+          Colors.red,
+          Colors.orange,
+        ])),
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: <Widget>[
             Row(),
             Padding(
               padding:
-              const EdgeInsets.symmetric(horizontal: 42.0, vertical: 32.0),
+                  const EdgeInsets.symmetric(horizontal: 42.0, vertical: 32.0),
               child: Container(
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
@@ -229,7 +231,7 @@ class _DonorListPageState extends State<DonorListPage> {
         children: <Widget>[
           Container(
               child: ListView(shrinkWrap: true, children: <Widget>[
-                _getHelloUserText(mailid),
+            _getHelloUserText(mailid),
             SizedBox(child: _messageBox()),
             SizedBox(width: 10, child: _submitMessageButton()),
             SizedBox(height: 10),

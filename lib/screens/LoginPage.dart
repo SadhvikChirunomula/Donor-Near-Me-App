@@ -1,11 +1,16 @@
+import 'dart:convert';
+import 'package:shared_preferences/shared_preferences.dart';
+
 import 'package:contactus/contactus.dart';
+import 'package:dnmui/constants/Common.dart';
 import 'package:dnmui/models/LoginScreen/AuthenticateRequest.dart';
 import 'package:dnmui/models/LoginScreen/UpdateFcmTokenRequest.dart';
 import 'package:dnmui/screens/RegisterPage.dart';
-import 'file:///F:/dnmuiapp/DonorNearMeApp/lib/services/LoginScreenService.dart';
+import 'package:dnmui/services/LoginScreenService.dart';
 import 'package:flutter/material.dart';
 import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:flutter_share/flutter_share.dart';
+import 'package:http/http.dart' as http;
 
 import 'OnLoginPage.dart';
 
@@ -22,15 +27,22 @@ class _LoginPageState extends State<LoginPage> {
   TextStyle style = TextStyle(fontFamily: 'Montserrat', fontSize: 20.0);
   TextEditingController emailFieldController = new TextEditingController();
   TextEditingController passwordFieldController = new TextEditingController();
-  FirebaseMessaging _firebaseMessaging ;
+  FirebaseMessaging _firebaseMessaging;
   String error = '';
-  String fcmToken= '';
+  String fcmToken = '';
   bool _passwordVisible = false;
+  bool isUserLoggedIn;
+
+  @override
+  initState() {
+    _firebaseRegister();
+    super.initState();
+  }
 
   LoginScreenService loginScreenService = new LoginScreenService();
   AuthenticateModel authenticateModel;
   UpdateFcmTokenRequest updateFcmTokenRequest;
-  
+
   Widget _appOwnerDetails() {
     return MaterialApp(
       debugShowCheckedModeBanner: false,
@@ -101,10 +113,14 @@ class _LoginPageState extends State<LoginPage> {
           updateFcmTokenRequest = new UpdateFcmTokenRequest();
           authenticateModel.mailid = emailFieldController.text;
           authenticateModel.password = passwordFieldController.text;
-          Map<String, dynamic> data = await loginScreenService.authenticateApi(authenticateModel);
+          Map<String, dynamic> data =
+              await loginScreenService.authenticateApi(authenticateModel);
           if (data['error'] == null) {
-            _firebaseRegister();
+            print("Authentication Succesfull");
             _updateTokenInDb(updateFcmTokenRequest);
+            SharedPreferences prefs = await SharedPreferences.getInstance();
+            prefs.setBool('isUserLoggedIn', true);
+            prefs.setString('mailid', emailFieldController.text);
             setState(() {
               error = '';
             });
@@ -171,9 +187,19 @@ class _LoginPageState extends State<LoginPage> {
   }
 
   _firebaseRegister() {
-    _firebaseMessaging = new FirebaseMessaging();
-    setState(() {
-      _firebaseMessaging.getToken().then((token) => fcmToken = token);
+    print("Trying to get FCM Token..");
+    FirebaseMessaging _firebaseMessaging = new FirebaseMessaging();
+    _firebaseMessaging.getToken().then((token) => setState(() {
+          fcmToken = token;
+          print("Firebase Register :" + fcmToken);
+        }));
+
+    _firebaseMessaging.onTokenRefresh.listen((newToken) {
+      setState(() {
+        fcmToken = newToken;
+      });
+
+      print("New Token :" + newToken);
     });
   }
 
@@ -204,7 +230,7 @@ class _LoginPageState extends State<LoginPage> {
 //          Colors.red[50],
 //          Colors.red[200],
 //        ])
-        ),
+            ),
         child: Center(
             child: Padding(
           padding: const EdgeInsets.all(36.0),
@@ -252,8 +278,13 @@ class _LoginPageState extends State<LoginPage> {
     );
   }
 
-  void _updateTokenInDb(UpdateFcmTokenRequest updateFcmTokenRequest) {
-    Future<Map<String, dynamic>> data =  loginScreenService.updateFcmToken(updateFcmTokenRequest);
-    print(data);
+  _updateTokenInDb(UpdateFcmTokenRequest updateFcmTokenRequest) {
+    updateFcmTokenRequest.mailid = emailFieldController.text;
+    updateFcmTokenRequest.fcmToken = fcmToken;
+    print("Fcm Token : " + fcmToken);
+    print("Hello World!");
+    loginScreenService.updateFcmToken(updateFcmTokenRequest);
+
+    print("Namastey!");
   }
 }

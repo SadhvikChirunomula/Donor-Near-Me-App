@@ -37,7 +37,7 @@ class _RegisterPageState extends State<RegisterPage> {
   List<String> bloodGroupsList = [];
   FirebaseMessaging _firebaseMessaging = FirebaseMessaging();
   String userDetailsJson = '';
-  String fcmtoken = '';
+  String fcmToken = '';
   String error = 'Please Enter OTP';
   bool wrongOtp = false;
   bool smsNotification = true;
@@ -47,17 +47,19 @@ class _RegisterPageState extends State<RegisterPage> {
   ValidateOtpRequest validateOtpRequest;
   SendOtpRequest sendOtpRequest;
   GetUserOtpRequest getUserOtpRequest;
-  
 
   @override
   void initState() {
+    // ignore: todo
     // TODO: implement initState
+    _firebaseRegister();
     super.initState();
     _getBloodGroupsList();
   }
 
   _getBloodGroupsList() async {
-    Map<String, dynamic> data = await registerScreenService.getBloodGroupsList();
+    Map<String, dynamic> data =
+        await registerScreenService.getBloodGroupsList();
     bloodGroupsList = [];
     setState(() {
       var jsonList = data['bloodGroupsList']['blood_group'];
@@ -76,7 +78,7 @@ class _RegisterPageState extends State<RegisterPage> {
       'phonenumber': userDetailsMap['phonenumber'],
       'sms_notification': userDetailsMap['sms_notification'],
       'username': userDetailsMap['username'],
-      'fcmtoken': userDetailsMap['fcmtoken']
+      'fcmToken': userDetailsMap['fcmToken']
     };
   }
 
@@ -84,7 +86,8 @@ class _RegisterPageState extends State<RegisterPage> {
     validateOtpRequest = new ValidateOtpRequest();
     validateOtpRequest.mailid = userDetailsMap['mailid'];
     validateOtpRequest.otp = otp;
-    Map<String, dynamic> data = await registerScreenService.validateOtp(validateOtpRequest);
+    Map<String, dynamic> data =
+        await registerScreenService.validateOtp(validateOtpRequest);
     print(_userDetailsMapToJson(userDetailsMap));
     if (data['error'] == null) {
       Navigator.push(
@@ -168,10 +171,20 @@ class _RegisterPageState extends State<RegisterPage> {
   }
 
   _firebaseRegister() {
-//    _firebaseMessaging.deleteInstanceID();
-  setState(() {
-    _firebaseMessaging.getToken().then((token) => fcmtoken = token);
-  });
+    print("Trying to get FCM Token..");
+    FirebaseMessaging _firebaseMessaging = new FirebaseMessaging();
+    _firebaseMessaging.getToken().then((token) => setState(() {
+          fcmToken = token;
+          print("Firebase Register :" + fcmToken);
+        }));
+
+    _firebaseMessaging.onTokenRefresh.listen((newToken) {
+      setState(() {
+        fcmToken = newToken;
+      });
+
+      print("New Token :" + newToken);
+    });
   }
 
   Widget _getHelloUserText() {
@@ -265,8 +278,8 @@ class _RegisterPageState extends State<RegisterPage> {
           decoration: InputDecoration(
               contentPadding: EdgeInsets.fromLTRB(20.0, 15.0, 20.0, 15.0),
               hintText: "Password",
-              border: OutlineInputBorder(
-                  borderRadius: BorderRadius.circular(32.0)),
+              border:
+                  OutlineInputBorder(borderRadius: BorderRadius.circular(32.0)),
               suffixIcon: IconButton(
                 icon: Icon(
                   _passwordVisible ? Icons.visibility : Icons.visibility_off,
@@ -372,23 +385,11 @@ class _RegisterPageState extends State<RegisterPage> {
         minWidth: MediaQuery.of(context).size.width,
         padding: EdgeInsets.fromLTRB(20.0, 15.0, 20.0, 15.0),
         onPressed: () async {
-          _firebaseRegister();
-          print("Token of the User is :" + fcmtoken);
-          setState(() {
-            userDetailsJson = jsonEncode(<String, String>{
-              'bloodgroup': bloodGroup,
-              'mail_notification': mailNotification.toString(),
-              'mailid': emailFieldController.text,
-              'password': passwordFieldController.text,
-              'phonenumber': mobileNumberFieldController.text,
-              'sms_notification': smsNotification.toString(),
-              'username': fullNameFieldController.text,
-              'fcmtoken': fcmtoken
-            });
-          });
-          print(userDetailsJson);
+          sendOtpRequest = new SendOtpRequest();
+          print("Token of the User is :" + fcmToken);
           sendOtpRequest.mailid = emailFieldController.text;
-          http.Response response = await registerScreenService.sendOtpToUser(sendOtpRequest);
+          http.Response response =
+              await registerScreenService.sendOtpToUser(sendOtpRequest);
           print(response.statusCode);
           if (response.statusCode == 200) {
             _getOtp(emailFieldController.text);
@@ -413,7 +414,8 @@ class _RegisterPageState extends State<RegisterPage> {
     print("Mailid for OTP : " + mailid);
     getUserOtpRequest = new GetUserOtpRequest();
     getUserOtpRequest.mailid = mailid;
-    Map<String ,dynamic> data = await registerScreenService.getUserOtp(getUserOtpRequest);
+    Map<String, dynamic> data =
+        await registerScreenService.getUserOtp(getUserOtpRequest);
     print("OTP in data : " + data['otp']);
     setState(() {
       otp = data['otp'];

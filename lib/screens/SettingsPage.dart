@@ -5,7 +5,6 @@ import 'package:dnmui/models/SettingsScreenModel/UpdateUserRequest.dart';
 import 'package:dnmui/screens/OnLoginPage.dart';
 import 'package:dnmui/services/SettingsScreenService.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter_feather_icons/flutter_feather_icons.dart';
 import 'package:http/http.dart' as http;
 import 'package:input_sheet/components/IpsCard.dart';
 import 'package:input_sheet/components/IpsError.dart';
@@ -83,7 +82,7 @@ class _SettingsPageState extends State<SettingsPage> {
 //      color: Colors.red,
       label: IpsLabel("Name"),
       value: IpsValue(_fullName ?? "Touch to edit..."),
-      icon: IpsIcon(FeatherIcons.edit3),
+      icon: IpsIcon(Icons.edit),
       error: IpsError(_errors['name']),
       onClick: () => InputSheet(
         context,
@@ -105,7 +104,7 @@ class _SettingsPageState extends State<SettingsPage> {
     return IpsCard(
       label: IpsLabel("Blood Group"),
       value: IpsValue(_bloodGroup ?? "Touch to edit..."),
-      icon: IpsIcon(FeatherIcons.edit3),
+      icon: IpsIcon(Icons.edit),
       error: IpsError(_errors['name']),
       onClick: () => InputSheet(
         context,
@@ -128,7 +127,7 @@ class _SettingsPageState extends State<SettingsPage> {
 //      color: Colors.red,
       label: IpsLabel("Password"),
       value: IpsValue(_password ?? "Touch to edit..."),
-      icon: IpsIcon(FeatherIcons.edit3),
+      icon: IpsIcon(Icons.edit),
       error: IpsError(_errors['name']),
       onClick: () => InputSheet(
         context,
@@ -151,7 +150,7 @@ class _SettingsPageState extends State<SettingsPage> {
 //      color: Colors.red,
       label: IpsLabel("Mail Id"),
       value: IpsValue(mailid ?? "Touch to edit..."),
-      icon: IpsIcon(FeatherIcons.edit3),
+      icon: IpsIcon(Icons.edit),
       error: IpsError(_errors['name']),
       onClick: () => InputSheet(
         context,
@@ -174,7 +173,7 @@ class _SettingsPageState extends State<SettingsPage> {
 //      color: Colors.red,
       label: IpsLabel("Mobile Number"),
       value: IpsValue(_mobileNumber ?? "Touch to edit..."),
-      icon: IpsIcon(FeatherIcons.edit3),
+      icon: IpsIcon(Icons.edit),
       error: IpsError(_errors['name']),
       onClick: () => InputSheet(
         context,
@@ -197,7 +196,7 @@ class _SettingsPageState extends State<SettingsPage> {
 //      color: Colors.red,
       label: IpsLabel("Sms Notification"),
       value: IpsValue(_smsNotification ?? "Touch to edit..."),
-      icon: IpsIcon(FeatherIcons.edit3),
+      icon: IpsIcon(Icons.edit),
       error: IpsError(_errors['name']),
       onClick: () => InputSheet(
         context,
@@ -220,7 +219,7 @@ class _SettingsPageState extends State<SettingsPage> {
 //      color: Colors.red,
       label: IpsLabel("Mail Notification"),
       value: IpsValue(_mailNotification ?? "Touch to edit..."),
-      icon: IpsIcon(FeatherIcons.edit3),
+      icon: IpsIcon(Icons.edit),
       error: IpsError(_errors['name']),
       onClick: () => InputSheet(
         context,

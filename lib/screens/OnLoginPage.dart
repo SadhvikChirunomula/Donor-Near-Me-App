@@ -1,15 +1,13 @@
 import 'dart:convert';
 
 import 'package:badges/badges.dart';
-import 'package:dnmui/constants/Common.dart';
 import 'package:dnmui/models/OnLoginScreenModel/GetBloodRequestListRequest.dart';
 import 'package:dnmui/screens/ContactUsPage.dart';
 import 'package:dnmui/screens/DonorRequestPage.dart';
 import 'package:dnmui/screens/LoginPage.dart';
 import 'file:///F:/dnmuiapp/DonorNearMeApp/lib/services/OnLoginScreenService.dart';
-import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
-import 'package:http/http.dart' as http;
+import 'package:shared_preferences/shared_preferences.dart';
 
 import 'FactsPage.dart';
 import 'SettingsPage.dart';
@@ -36,7 +34,9 @@ class _OnLoginPageState extends State<OnLoginPage> {
     onLoginScreenService = new OnLoginScreenService();
     getBloodRequestListRequest = new GetBloodRequestListRequest();
     getBloodRequestListRequest.mailid = mailid;
-    Map<String, dynamic> data = await onLoginScreenService.getBloodRequestsList(getBloodRequestListRequest);;
+    Map<String, dynamic> data = await onLoginScreenService
+        .getBloodRequestsList(getBloodRequestListRequest);
+    ;
     var jsonList = data['requestsList'];
     List<Map> tempList = [];
     for (Map x in jsonList) {
@@ -219,8 +219,11 @@ class _OnLoginPageState extends State<OnLoginPage> {
                   ),
                 )),
             GestureDetector(
-                onTap: () {
+                onTap: () async {
                   print("Logging Out");
+                  SharedPreferences sharedPreferences =
+                      await SharedPreferences.getInstance();
+                  sharedPreferences.setBool('isUserLoggedIn', false);
                   Navigator.push(
                     context,
                     MaterialPageRoute(builder: (context) => LoginPage()),
@@ -231,8 +234,7 @@ class _OnLoginPageState extends State<OnLoginPage> {
                     color: Colors.white,
                     icon: new Icon(Icons.exit_to_app),
                   ),
-                )
-            )
+                ))
           ],
           title: Text('Welcome Donor'),
           backgroundColor: Colors.redAccent,
