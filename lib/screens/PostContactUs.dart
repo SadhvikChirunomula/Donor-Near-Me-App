@@ -1,3 +1,4 @@
+import 'package:dnmui/screens/LoginPage.dart';
 import 'package:flutter/material.dart';
 
 import 'AskForLoginOrSignUp.dart';
@@ -16,43 +17,42 @@ class _PostContactUsPageState extends State<PostContactUsPage> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: Text('Contact Us'),
-        backgroundColor: Colors.redAccent,
-        brightness: Brightness.dark,
-        centerTitle: true,
+          title: Text('Contact Us'),
+          backgroundColor: Colors.redAccent,
+          brightness: Brightness.dark,
+          centerTitle: true,
           actions: [
             IconButton(
               icon: Icon(Icons.home),
               onPressed: () {
                 Navigator.push(
                   context,
-                  MaterialPageRoute(
-                      builder: (context) => AskForLoginOrSignUp()),
+                  MaterialPageRoute(builder: (context) => LoginPage()),
                 );
               },
             )
-          ]
-      ),
+          ]),
       body: Container(
         height: double.infinity,
         width: double.infinity,
         decoration: BoxDecoration(
             gradient: LinearGradient(colors: [
-              Colors.red[100],
-              Colors.white,
-              Colors.red[50],
-            ])),
+          Colors.red[100],
+          Colors.white,
+          Colors.red[50],
+        ])),
         child: Center(
             child: Padding(
-              padding: const EdgeInsets.all(36.0),
-              child: ListView(
-                shrinkWrap: true,
-                children: <Widget>[
-                  Text('We have recieved your Request. We will reach you shortly. \n Thank You',textAlign: TextAlign.center)
-                ],
-              ),
-            )
-        ),
+          padding: const EdgeInsets.all(36.0),
+          child: ListView(
+            shrinkWrap: true,
+            children: <Widget>[
+              Text(
+                  'We have recieved your Request. We will reach you shortly. \n Thank You',
+                  textAlign: TextAlign.center)
+            ],
+          ),
+        )),
       ),
     );
   }

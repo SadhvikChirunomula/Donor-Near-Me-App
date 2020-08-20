@@ -1,6 +1,7 @@
 import 'dart:convert';
 
 import 'package:dnmui/screens/AskForLoginOrSignUp.dart';
+import 'package:dnmui/screens/LoginPage.dart';
 import 'package:dnmui/screens/PostContactUs.dart';
 import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
@@ -91,8 +92,7 @@ class _ContactUsPageState extends State<ContactUsPage> {
               onPressed: () {
                 Navigator.push(
                   context,
-                  MaterialPageRoute(
-                      builder: (context) => AskForLoginOrSignUp()),
+                  MaterialPageRoute(builder: (context) => LoginPage()),
                 );
               },
             )

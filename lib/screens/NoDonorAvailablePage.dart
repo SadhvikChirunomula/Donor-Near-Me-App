@@ -1,3 +1,4 @@
+import 'package:dnmui/screens/LoginPage.dart';
 import 'package:flutter/material.dart';
 
 import 'AskForLoginOrSignUp.dart';
@@ -26,8 +27,7 @@ class _NoDonorAvailablePageState extends State<NoDonorAvailablePage> {
               onPressed: () {
                 Navigator.push(
                   context,
-                  MaterialPageRoute(
-                      builder: (context) => AskForLoginOrSignUp()),
+                  MaterialPageRoute(builder: (context) => LoginPage()),
                 );
               },
             )

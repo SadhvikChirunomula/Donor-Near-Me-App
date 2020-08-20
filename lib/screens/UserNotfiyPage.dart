@@ -1,6 +1,7 @@
 import 'dart:convert';
 
-import 'package:call_number/call_number.dart';
+import 'package:intent/intent.dart' as android_intent;
+import 'package:intent/action.dart' as android_action;
 import 'package:flutter/material.dart';
 import 'package:flutter_share/flutter_share.dart';
 import 'package:flutter_slidable/flutter_slidable.dart';
@@ -42,8 +43,12 @@ class _UserNotifyPageState extends State<UserNotifyPage> {
           child: InkWell(
             splashColor: Colors.green, // splash color
             onTap: () async {
-              await CallNumber()
-                  .callNumber('+91' + bloodRequestsList[i]['phonenumber']);
+              android_intent.Intent()
+                ..setAction(android_action.Action.ACTION_DIAL)
+                ..setData(Uri(scheme: "tel", path: '+91' + bloodRequestsList[i]['phonenumber']))
+                ..startActivity().catchError((e) => print(e));
+//              await CallNumber()
+//                  .callNumber('+91' + bloodRequestsList[i]['phonenumber']);
             }, // button pressed
             child: Column(
               mainAxisAlignment: MainAxisAlignment.center,

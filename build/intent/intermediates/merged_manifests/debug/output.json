@@ -1,0 +1,26 @@
+{
+  "version": 1,
+  "applicationId": "io.github.itzmeanjan.intent",
+  "variantType": "LIBRARY",
+  "elements": [
+    {
+      "outputType": {
+        "type": "MERGED_MANIFESTS"
+      },
+      "apkData": {
+        "type": "MAIN",
+        "splits": [],
+        "versionCode": -1,
+        "outputFile": "intent-debug.aar",
+        "fullName": "debug",
+        "baseName": "debug",
+        "dirName": ""
+      },
+      "path": "../../library_manifest/debug/AndroidManifest.xml",
+      "properties": {
+        "packageId": "io.github.itzmeanjan.intent",
+        "split": ""
+      }
+    }
+  ]
+}

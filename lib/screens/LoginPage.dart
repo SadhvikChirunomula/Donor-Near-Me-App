@@ -12,6 +12,7 @@ import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:flutter_share/flutter_share.dart';
 import 'package:http/http.dart' as http;
 
+import 'DonorNearMeInfoPage.dart';
 import 'OnLoginPage.dart';
 
 class LoginPage extends StatefulWidget {
@@ -118,9 +119,9 @@ class _LoginPageState extends State<LoginPage> {
           if (data['error'] == null) {
             print("Authentication Succesfull");
             _updateTokenInDb(updateFcmTokenRequest);
-            SharedPreferences prefs = await SharedPreferences.getInstance();
-            prefs.setBool('isUserLoggedIn', true);
-            prefs.setString('mailid', emailFieldController.text);
+            SharedPreferences _prefs = await SharedPreferences.getInstance();
+            _prefs.setBool('isUserLoggedIn', true);
+            _prefs.setString('mailid', emailFieldController.text);
             setState(() {
               error = '';
             });
@@ -212,6 +213,17 @@ class _LoginPageState extends State<LoginPage> {
           brightness: Brightness.dark,
           centerTitle: true,
           automaticallyImplyLeading: false,
+          leading: GestureDetector(
+            onTap: () {
+              Navigator.push(
+                context,
+                MaterialPageRoute(builder: (context) => DonorNearMeInfoPage()),
+              );
+            },
+            child: Icon(
+              Icons.info,
+            ),
+          ),
           actions: [
             IconButton(
               icon: Icon(Icons.share),

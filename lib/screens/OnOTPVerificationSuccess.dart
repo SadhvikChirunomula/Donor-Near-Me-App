@@ -6,6 +6,7 @@ import 'package:dnmui/models/OnOtpVerificationSuccessModel/GetDistrictsListReque
 import 'package:dnmui/models/OnOtpVerificationSuccessModel/GetPincodeRequest.dart';
 import 'package:dnmui/models/OnOtpVerificationSuccessModel/GetStatesListRequest.dart';
 import 'package:dnmui/models/OnOtpVerificationSuccessModel/GetTownsListRequest.dart';
+import 'package:dnmui/screens/LoginPage.dart';
 import 'package:dnmui/services/OnOtpVerificationSuccessService.dart';
 import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
@@ -327,10 +328,10 @@ class _OnOTPVerificationSuccessPageState
   _addUserToDb(Map<String, dynamic> userDetailsMap) async {
     addUserRequest = new AddUserRequest();
     addUserRequest.bloodgroup = userDetailsMap['bloodgroup'];
-    addUserRequest.city =userDetailsMap['city'];
-    addUserRequest.country =userDetailsMap['country'];
+    addUserRequest.city = userDetailsMap['city'];
+    addUserRequest.country = userDetailsMap['country'];
     addUserRequest.district = userDetailsMap['district'];
-    addUserRequest.mail_notification =userDetailsMap['mail_notification'];
+    addUserRequest.mail_notification = userDetailsMap['mail_notification'];
     addUserRequest.mailid = userDetailsMap['mailid'];
     addUserRequest.password = userDetailsMap['password'];
     addUserRequest.phonenumber = userDetailsMap['phonenumber'];
@@ -341,7 +342,8 @@ class _OnOTPVerificationSuccessPageState
     addUserRequest.username = userDetailsMap['username'];
     addUserRequest.fcmtoken = userDetailsMap['fcmtoken'];
 
-    Map<String, dynamic> addedData = await onOtpVerificationSuccessService.addUserToDb(addUserRequest);
+    Map<String, dynamic> addedData =
+        await onOtpVerificationSuccessService.addUserToDb(addUserRequest);
     if (addedData['status'] ==
         'Added User Succesfully. Please sign in to continue') {
       print('Hello World');
@@ -356,11 +358,12 @@ class _OnOTPVerificationSuccessPageState
 
   _getPincodeValue() async {
     getPincodeRequest = new GetPincodeRequest();
-    getPincodeRequest.state=state;
-    getPincodeRequest.district=district;
-    getPincodeRequest.country=country;
-    getPincodeRequest.city=city;
-    Map<String, dynamic> data = await onOtpVerificationSuccessService.getPincode(getPincodeRequest);
+    getPincodeRequest.state = state;
+    getPincodeRequest.district = district;
+    getPincodeRequest.country = country;
+    getPincodeRequest.city = city;
+    Map<String, dynamic> data =
+        await onOtpVerificationSuccessService.getPincode(getPincodeRequest);
     setState(() {
       pincode = data['pincode'];
     });
@@ -419,8 +422,7 @@ class _OnOTPVerificationSuccessPageState
               onPressed: () {
                 Navigator.push(
                   context,
-                  MaterialPageRoute(
-                      builder: (context) => AskForLoginOrSignUp()),
+                  MaterialPageRoute(builder: (context) => LoginPage()),
                 );
               },
             )

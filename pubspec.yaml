@@ -1,5 +1,5 @@
 name: dnmui
-description: A new Flutter project.
+description: Get Blood Donors Near You.
 
 # The following line prevents the package from being accidentally published to
 # pub.dev using `pub publish`. This is preferred for private packages.
@@ -29,8 +29,7 @@ dependencies:
   progress_state_button: 1.0.1
   searchable_dropdown: 1.1.3
   http: 0.12.2
-  firebase_messaging: 6.0.16
-  call_number: 0.0.1
+  firebase_messaging:
   auto_size_text: 2.1.0
   flutter_slidable: 0.5.5
   rflutter_alert: 1.0.3
@@ -42,6 +41,8 @@ dependencies:
   badges: 1.1.1
   input_sheet: 0.2.1
   shared_preferences: ^0.5.7+3
+  flutter_rating_bar: 3.0.1+1
+  intent: 1.4.0
 
 
 
@@ -62,6 +63,7 @@ dev_dependencies:
 # following page: https://dart.dev/tools/pub/pubspec
 
 # The following section is specific to Flutter.
+manifest_version: 2
 flutter:
   assets:
     - assets/logo.png

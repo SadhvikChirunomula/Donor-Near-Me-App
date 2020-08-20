@@ -3,6 +3,7 @@ import 'dart:convert';
 import 'package:dnmui/models/RegisterScreenModel/GetUserOtpRequest.dart';
 import 'package:dnmui/models/RegisterScreenModel/SendOtpRequest.dart';
 import 'package:dnmui/models/RegisterScreenModel/ValidateOtpRequest.dart';
+import 'package:dnmui/screens/LoginPage.dart';
 import 'package:dnmui/screens/OnOTPVerificationSuccess.dart';
 import 'package:dnmui/services/RegisterScreenService.dart';
 import 'package:firebase_messaging/firebase_messaging.dart';
@@ -35,7 +36,6 @@ class _RegisterPageState extends State<RegisterPage> {
   String otp = '';
   String bloodGroup;
   List<String> bloodGroupsList = [];
-  FirebaseMessaging _firebaseMessaging = FirebaseMessaging();
   String userDetailsJson = '';
   String fcmToken = '';
   String error = 'Please Enter OTP';
@@ -88,7 +88,7 @@ class _RegisterPageState extends State<RegisterPage> {
     validateOtpRequest.otp = otp;
     Map<String, dynamic> data =
         await registerScreenService.validateOtp(validateOtpRequest);
-    print(_userDetailsMapToJson(userDetailsMap));
+    // print(_userDetailsMapToJson(userDetailsMap));
     if (data['error'] == null) {
       Navigator.push(
         context,
@@ -105,9 +105,8 @@ class _RegisterPageState extends State<RegisterPage> {
     }
   }
 
-  Widget _getOTPVerifyAlertPage(String userDetails) {
+  _getOTPVerifyAlertPage(String userDetails) {
     Map userDetailsMap = jsonDecode(userDetails);
-
     Alert(
         context: context,
         title: "Please Enter OTP",
@@ -128,7 +127,7 @@ class _RegisterPageState extends State<RegisterPage> {
                   "OTP has been sent to the registered mailid and registered Phone Number. Please verify to continue",
                   textAlign: TextAlign.center,
                   style: TextStyle(
-//                  fontSize: 10.0,
+                      //                  fontSize: 10.0,
                       fontWeight: FontWeight.normal,
                       color: Colors.black)),
             )
@@ -148,10 +147,10 @@ class _RegisterPageState extends State<RegisterPage> {
   }
 
   Widget _wrongOtpEnteredMessage() {
-    return Text('Please check OTP again');
+    return new Text('Please check OTP again');
   }
 
-  Widget wrongOtpEnteredAlert() {
+  wrongOtpEnteredAlert() {
     Alert(
         context: context,
         title: "Verify OTP",
@@ -390,6 +389,19 @@ class _RegisterPageState extends State<RegisterPage> {
           sendOtpRequest.mailid = emailFieldController.text;
           http.Response response =
               await registerScreenService.sendOtpToUser(sendOtpRequest);
+          Map<String, dynamic> userMap = new Map();
+          String _mailid = emailFieldController.text;
+          String _password = passwordFieldController.text;
+          String _phoneNumber = mobileNumberFieldController.text;
+          String _fullName = fullNameFieldController.text;
+          userDetailsJson = '''{
+            "mailid":"$_mailid",
+            "phonenumber":"$_phoneNumber",
+            "password":"$_password",
+            "fullName":"$_fullName"
+          }''';
+          // userDetailsJson = jsonEncode(_userDetailsMapToJson());
+          print("User Details Json : " + userDetailsJson);
           print(response.statusCode);
           if (response.statusCode == 200) {
             _getOtp(emailFieldController.text);
@@ -448,8 +460,7 @@ class _RegisterPageState extends State<RegisterPage> {
               onPressed: () {
                 Navigator.push(
                   context,
-                  MaterialPageRoute(
-                      builder: (context) => AskForLoginOrSignUp()),
+                  MaterialPageRoute(builder: (context) => LoginPage()),
                 );
               },
             )

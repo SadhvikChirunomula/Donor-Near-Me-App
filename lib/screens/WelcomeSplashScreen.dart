@@ -14,7 +14,7 @@ class WelcomeSplashScreen extends StatefulWidget {
 
 class _WelcomeSplashScreen extends State<WelcomeSplashScreen> {
   bool isUserLoggedIn = false;
-  String mailid;
+  String mailid = '';
 
   getUserLoggedInDetail() async {
     SharedPreferences prefs = await SharedPreferences.getInstance();

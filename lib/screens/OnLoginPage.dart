@@ -1,13 +1,14 @@
-import 'dart:convert';
-
 import 'package:badges/badges.dart';
 import 'package:dnmui/models/OnLoginScreenModel/GetBloodRequestListRequest.dart';
+import 'package:dnmui/models/OnLoginScreenModel/SubmitUserReviewRequest.dart';
 import 'package:dnmui/screens/ContactUsPage.dart';
 import 'package:dnmui/screens/DonorRequestPage.dart';
 import 'package:dnmui/screens/LoginPage.dart';
-import 'file:///F:/dnmuiapp/DonorNearMeApp/lib/services/OnLoginScreenService.dart';
+import 'package:dnmui/services/OnLoginScreenService.dart';
 import 'package:flutter/material.dart';
+import 'package:rflutter_alert/rflutter_alert.dart';
 import 'package:shared_preferences/shared_preferences.dart';
+import 'package:flutter_rating_bar/flutter_rating_bar.dart';
 
 import 'FactsPage.dart';
 import 'SettingsPage.dart';
@@ -25,6 +26,7 @@ class OnLoginPage extends StatefulWidget {
 class _OnLoginPageState extends State<OnLoginPage> {
   String mailid;
   OnLoginScreenService onLoginScreenService;
+  String userRating;
   GetBloodRequestListRequest getBloodRequestListRequest;
   _OnLoginPageState(this.mailid);
 
@@ -221,16 +223,15 @@ class _OnLoginPageState extends State<OnLoginPage> {
             GestureDetector(
                 onTap: () async {
                   print("Logging Out");
-                  SharedPreferences sharedPreferences =
-                      await SharedPreferences.getInstance();
-                  sharedPreferences.setBool('isUserLoggedIn', false);
-                  Navigator.push(
-                    context,
-                    MaterialPageRoute(builder: (context) => LoginPage()),
-                  );
+                  clearSharedPreferences();
+                  _reviewAlert(mailid);
+                  // Navigator.push(
+                  //   context,
+                  //   MaterialPageRoute(builder: (context) => LoginPage()),
+                  // );
                 },
                 child: Container(
-                  child: new IconButton(
+                  child: IconButton(
                     color: Colors.white,
                     icon: new Icon(Icons.exit_to_app),
                   ),
@@ -240,7 +241,7 @@ class _OnLoginPageState extends State<OnLoginPage> {
           backgroundColor: Colors.redAccent,
           automaticallyImplyLeading: false,
           brightness: Brightness.dark,
-//          centerTitle: true
+          //          centerTitle: true
         ),
         body: Container(
             height: double.infinity,
@@ -261,10 +262,126 @@ class _OnLoginPageState extends State<OnLoginPage> {
                   SizedBox(height: 40.0),
                   _getFactsButton(),
                   SizedBox(height: 40.0),
-//                  _notificationBadge()
+                  //                  _notificationBadge()
                 ],
               ),
             )),
         floatingActionButton: _getContactUsButton());
+  }
+
+  Future<void> clearSharedPreferences() async {
+    SharedPreferences _sharedPreferences =
+        await SharedPreferences.getInstance();
+    _sharedPreferences.setBool('isUserLoggedIn', false);
+  }
+
+  Widget _getRatingBar() {
+    return RatingBar(
+        initialRating: 5,
+        itemCount: 5,
+        itemBuilder: (context, index) {
+          switch (index) {
+            case 0:
+              return Icon(
+                Icons.sentiment_very_dissatisfied,
+                color: Colors.red,
+              );
+            case 1:
+              return Icon(
+                Icons.sentiment_dissatisfied,
+                color: Colors.redAccent,
+              );
+            case 2:
+              return Icon(
+                Icons.sentiment_neutral,
+                color: Colors.amber,
+              );
+            case 3:
+              return Icon(
+                Icons.sentiment_satisfied,
+                color: Colors.lightGreen,
+              );
+            case 4:
+              return Icon(
+                Icons.sentiment_very_satisfied,
+                color: Colors.green,
+              );
+          }
+        },
+        onRatingUpdate: (rating) {
+          setState(() {
+            userRating = rating.toString().substring(0, 1);
+          });
+          print(rating);
+        });
+  }
+
+  TextEditingController commentController = new TextEditingController();
+
+  Widget _getCommentBox() {
+    return Container(
+        width: double.infinity,
+        child: TextField(
+          textAlign: TextAlign.left,
+          style: TextStyle(color: Colors.black),
+          controller: commentController,
+          obscureText: false,
+          decoration: InputDecoration(
+              // contentPadding: EdgeInsets.fromLTRB(20.0, 15.0, 20.0, 15.0),
+              hintText: "Pls Share you comment..",
+              border: OutlineInputBorder(
+                  borderRadius: BorderRadius.circular(32.0))),
+        ));
+  }
+
+  Widget _getReviewSubmitBotton() {
+    return Container(
+        width: 30,
+        height: 60,
+        padding: EdgeInsets.fromLTRB(50, 0, 50, 0),
+        child: new Text("hello World"));
+  }
+
+  _reviewAlert(String mailid) {
+    Alert(
+        context: context,
+        title: "Rate your experience",
+        content: Column(
+          children: <Widget>[
+            _getRatingBar(),
+            SizedBox(height: 15.0),
+            _getCommentBox(),
+          ],
+        ),
+        buttons: [_getReviewSubmitButtonTest(mailid)]).show();
+  }
+
+  _getReviewSubmitButtonTest(String mailid) {
+    SubmitUserReviewRequest submitUserReviewRequest =
+        new SubmitUserReviewRequest();
+    onLoginScreenService = new OnLoginScreenService();
+    return DialogButton(
+      color: Colors.red,
+      onPressed: () {
+        submitUserReviewRequest.mailId = mailid;
+        submitUserReviewRequest.stars = userRating;
+        if (userRating == 0) {
+          submitUserReviewRequest.stars = "3";
+        }
+        submitUserReviewRequest.comment = commentController.text;
+        if (commentController.text == "") {
+          submitUserReviewRequest.comment = "No comment Provided";
+        }
+        Navigator.push(
+          context,
+          MaterialPageRoute(builder: (context) => LoginPage()),
+        );
+        onLoginScreenService.submitUserReview(submitUserReviewRequest);
+      },
+      child: Text(
+        "Submit and Logout",
+        style: TextStyle(color: Colors.white, fontSize: 20),
+      ),
+    );
   }
 }

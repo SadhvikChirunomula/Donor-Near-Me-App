@@ -6,5 +6,5 @@ void main() {
     title: 'Donor Near Me App',
     home: WelcomeSplashScreen(),
     debugShowCheckedModeBanner: false,
-));
+  ));
 }
